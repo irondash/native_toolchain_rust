@@ -1,7 +1,7 @@
 name: native_toolchain_rust
-description: "A new Flutter package project."
+description: A library to invoke Rust installed on the host machine. Intended for building native assets.
 version: 0.0.1
-homepage:
+homepage: https://github.com/irondash/native_toolchain_rust.git
 
 environment:
   sdk: '>=3.4.0-190.0.dev <4.0.0'
@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
