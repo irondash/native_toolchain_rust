@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust/rustup.dart';
 import 'package:native_toolchain_rust/src/android_environment.dart';
@@ -15,6 +16,7 @@ class RustBuilder {
     required this.manifestPath,
     required this.buildConfig,
     this.dartBuildFiles = const ['build.dart'],
+    this.logger,
   });
 
   final String assetId;
@@ -22,15 +24,16 @@ class RustBuilder {
   final String manifestPath;
   final BuildConfig buildConfig;
   final List<String> dartBuildFiles;
+  final Logger? logger;
 
-  void run({required BuildOutput output}) {
+  Future<void> run({required BuildOutput output}) async {
     final manifestPath = buildConfig.packageRoot.resolve(this.manifestPath);
     final manifestInfo = ManifestInfo.load(manifestPath);
     final outDir = buildConfig.outDir.resolve('native_toolchain_rust/');
     final targetTriple = buildConfig.target.toRust!.triple;
 
     if (!buildConfig.dryRun) {
-      runCommand(
+      await runCommand(
         toolchain.rustup.executablePath,
         [
           'run',
@@ -48,6 +51,7 @@ class RustBuilder {
           outDir.toFilePath(),
         ],
         environment: _buildEnvironment(outDir),
+        logger: logger,
       );
     }
 

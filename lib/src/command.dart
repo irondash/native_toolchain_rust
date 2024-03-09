@@ -2,10 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
+import 'package:process/process.dart';
 
-import 'logging.dart';
+const String _kSeparator = "--";
 
-final log = Logger("process");
+ProcessManager _processManager = LocalProcessManager();
+
+Future<T> withProcessManager<T>(
+    ProcessManager processManager, Future<T> run()) async {
+  final previous = _processManager;
+  _processManager = processManager;
+  try {
+    return await run();
+  } finally {
+    _processManager = previous;
+  }
+}
 
 class CommandFailedException implements Exception {
   final String executable;
@@ -25,55 +37,17 @@ class CommandFailedException implements Exception {
     return [
       "External Command: $executable ${arguments.map((e) => '"$e"').join(' ')}",
       "Returned Exit Code: ${result.exitCode}",
-      kSeparator,
+      _kSeparator,
       "STDOUT:",
       if (stdout.isNotEmpty) stdout,
-      kSeparator,
+      _kSeparator,
       "STDERR:",
       if (stderr.isNotEmpty) stderr,
     ].join('\n');
   }
 }
 
-class TestRunCommandArgs {
-  final String executable;
-  final List<String> arguments;
-  final String? workingDirectory;
-  final Map<String, String>? environment;
-  final bool includeParentEnvironment;
-  final bool runInShell;
-  final Encoding? stdoutEncoding;
-  final Encoding? stderrEncoding;
-
-  TestRunCommandArgs({
-    required this.executable,
-    required this.arguments,
-    this.workingDirectory,
-    this.environment,
-    this.includeParentEnvironment = true,
-    this.runInShell = false,
-    this.stdoutEncoding,
-    this.stderrEncoding,
-  });
-}
-
-class TestRunCommandResult {
-  TestRunCommandResult({
-    this.pid = 1,
-    this.exitCode = 0,
-    this.stdout = '',
-    this.stderr = '',
-  });
-
-  final int pid;
-  final int exitCode;
-  final String stdout;
-  final String stderr;
-}
-
-TestRunCommandResult Function(TestRunCommandArgs args)? testRunCommandOverride;
-
-ProcessResult runCommand(
+Future<ProcessResult> runCommand(
   String executable,
   List<String> arguments, {
   String? workingDirectory,
@@ -82,29 +56,15 @@ ProcessResult runCommand(
   bool runInShell = false,
   Encoding? stdoutEncoding = systemEncoding,
   Encoding? stderrEncoding = systemEncoding,
-}) {
-  if (testRunCommandOverride != null) {
-    final result = testRunCommandOverride!(TestRunCommandArgs(
-      executable: executable,
-      arguments: arguments,
-      workingDirectory: workingDirectory,
-      environment: environment,
-      includeParentEnvironment: includeParentEnvironment,
-      runInShell: runInShell,
-      stdoutEncoding: stdoutEncoding,
-      stderrEncoding: stderrEncoding,
-    ));
-    return ProcessResult(
-      result.pid,
-      result.exitCode,
-      result.stdout,
-      result.stderr,
-    );
-  }
-  log.finer('Running command $executable ${arguments.join(' ')}');
-  final res = Process.runSync(
-    executable,
-    arguments,
+  Logger? logger,
+}) async {
+  logger?.info('Running command $executable ${arguments.join(' ')}');
+
+  final res = await _processManager.run(
+    [
+      executable,
+      ...arguments,
+    ],
     workingDirectory: workingDirectory,
     environment: environment,
     includeParentEnvironment: includeParentEnvironment,

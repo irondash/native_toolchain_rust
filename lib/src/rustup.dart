@@ -1,45 +1,61 @@
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust/src/command.dart';
+import 'package:native_toolchain_rust/src/mutex.dart';
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
+
+final _mutex = Mutex();
 
 class Rustup {
   /// Returns rustup in user PATH.
-  static Rustup? systemRustup() {
+  static Rustup? systemRustup({Logger? logger}) {
     final executablePath = _findExecutablePath();
     return executablePath == null
         ? null
-        : Rustup(executablePath: executablePath);
+        : Rustup(executablePath: executablePath, logger: logger);
   }
 
   Rustup({
     required this.executablePath,
+    this.logger,
   });
 
-  List<RustupToolchain> installedToolchains() {
-    _cachedToolchains ??= _getInstalledToolchains();
-    return _cachedToolchains!;
+  Future<List<RustupToolchain>> installedToolchains() async {
+    return await _mutex.protect(() async {
+      _cachedToolchains ??= await _getInstalledToolchains();
+      return _cachedToolchains!;
+    });
   }
 
-  void installToolchain(String name) {
-    _cachedToolchains = null;
-    _runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
+  Future<RustupToolchain?> getToolchain(String name) async {
+    return (await installedToolchains()).firstWhereOrNull(
+      (e) => e.name == name || e.name.startsWith('$name-'),
+    );
   }
 
-  List<RustupToolchain> _getInstalledToolchains() {
+  Future<void> installToolchain(String name) async {
+    return await _mutex.protect(() async {
+      _cachedToolchains = null;
+      _runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
+    });
+  }
+
+  Future<List<RustupToolchain>> _getInstalledToolchains() async {
     String extractToolchainName(String line) {
       // ignore (default) after toolchain name
       final parts = line.split(' ');
       return parts[0];
     }
 
-    final res = _runCommand(['toolchain', 'list']);
+    final res = await _runCommand(['toolchain', 'list']);
 
     // To list all non-custom toolchains, we need to filter out lines that
     // don't start with "stable", "beta", or "nightly".
     Pattern nonCustom = RegExp(r"^(stable|beta|nightly)");
-    final lines = res.stdout
+    final lines = await res.stdout
         .toString()
         .split('\n')
         .where((e) => e.isNotEmpty && e.startsWith(nonCustom))
@@ -56,8 +72,12 @@ class Rustup {
         .toList(growable: true);
   }
 
-  ProcessResult _runCommand(List<String> arguments) {
-    return runCommand(executablePath, arguments);
+  Future<ProcessResult> _runCommand(List<String> arguments) {
+    return runCommand(
+      executablePath,
+      arguments,
+      logger: logger,
+    );
   }
 
   List<RustupToolchain>? _cachedToolchains;
@@ -84,6 +104,7 @@ class Rustup {
   }
 
   final String executablePath;
+  final Logger? logger;
 }
 
 class RustTarget {
@@ -152,18 +173,29 @@ class RustupToolchain {
   final String name;
   final Rustup rustup;
 
-  List<RustTarget> installedTargets() {
-    _cachedTargets ??= _getInstalledTargets();
-    return _cachedTargets!;
+  Future<Version> rustVersion() async {
+    final res = await rustup._runCommand(['run', name, 'rustc', '--version']);
+    final versionString = res.stdout.toString().split(' ')[1];
+    return Version.parse(versionString);
   }
 
-  void installTarget(RustTarget target) {
-    _cachedTargets = null;
-    rustup._runCommand(['target', 'add', target.triple, '--toolchain', name]);
+  Future<List<RustTarget>> installedTargets() async {
+    return await _mutex.protect(() async {
+      _cachedTargets ??= await _getInstalledTargets();
+      return _cachedTargets!;
+    });
   }
 
-  List<RustTarget> _getInstalledTargets() {
-    final res = runCommand("rustup", [
+  Future<void> installTarget(RustTarget target) async {
+    return await _mutex.protect(() async {
+      _cachedTargets = null;
+      await rustup
+          ._runCommand(['target', 'add', target.triple, '--toolchain', name]);
+    });
+  }
+
+  Future<List<RustTarget>> _getInstalledTargets() async {
+    final res = await runCommand("rustup", [
       'target',
       'list',
       '--toolchain',
