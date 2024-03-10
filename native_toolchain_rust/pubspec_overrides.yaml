@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: rustup
+dependency_overrides:
+  rustup:
+    path: ../rustup

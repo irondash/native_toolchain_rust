@@ -1,7 +1,7 @@
 import 'package:native_assets_cli/native_assets_cli.dart';
-import 'package:native_toolchain_rust/src/rustup.dart';
-import 'package:native_toolchain_rust/src/command.dart';
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rustup/src/command.dart';
+import 'package:rustup/src/rustup.dart';
 import 'package:test/test.dart';
 
 import 'fake_process_manager.dart';

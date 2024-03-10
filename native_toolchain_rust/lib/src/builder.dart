@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
-import 'package:native_toolchain_rust/rustup.dart';
+import 'package:rustup/rustup.dart';
 import 'package:native_toolchain_rust/src/android_environment.dart';
-import 'package:native_toolchain_rust/src/command.dart';
 import 'package:native_toolchain_rust/src/manifest.dart';
 
 import 'package:path/path.dart' as path;
@@ -33,8 +32,7 @@ class RustBuilder {
     final targetTriple = buildConfig.target.toRust!.triple;
 
     if (!buildConfig.dryRun) {
-      await runCommand(
-        toolchain.rustup.executablePath,
+      await toolchain.rustup.runCommand(
         [
           'run',
           toolchain.name,

@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
-import 'package:native_toolchain_rust/src/command.dart';
-import 'package:native_toolchain_rust/src/mutex.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:rustup/src/command.dart' as command;
+import 'package:rustup/src/mutex.dart';
 
 final _mutex = Mutex();
 
@@ -39,7 +39,7 @@ class Rustup {
   Future<void> installToolchain(String name) async {
     return await _mutex.protect(() async {
       _cachedToolchains = null;
-      _runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
+      runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
     });
   }
 
@@ -50,7 +50,7 @@ class Rustup {
       return parts[0];
     }
 
-    final res = await _runCommand(['toolchain', 'list']);
+    final res = await runCommand(['toolchain', 'list']);
 
     // To list all non-custom toolchains, we need to filter out lines that
     // don't start with "stable", "beta", or "nightly".
@@ -72,11 +72,16 @@ class Rustup {
         .toList(growable: true);
   }
 
-  Future<ProcessResult> _runCommand(List<String> arguments) {
-    return runCommand(
+  Future<ProcessResult> runCommand(
+    List<String> arguments, {
+    Map<String, String>? environment,
+    Logger? logger,
+  }) {
+    return command.runCommand(
       executablePath,
       arguments,
-      logger: logger,
+      environment: environment,
+      logger: logger ?? this.logger,
     );
   }
 
@@ -174,7 +179,7 @@ class RustupToolchain {
   final Rustup rustup;
 
   Future<Version> rustVersion() async {
-    final res = await rustup._runCommand(['run', name, 'rustc', '--version']);
+    final res = await rustup.runCommand(['run', name, 'rustc', '--version']);
     final versionString = res.stdout.toString().split(' ')[1];
     return Version.parse(versionString);
   }
@@ -190,12 +195,12 @@ class RustupToolchain {
     return await _mutex.protect(() async {
       _cachedTargets = null;
       await rustup
-          ._runCommand(['target', 'add', target.triple, '--toolchain', name]);
+          .runCommand(['target', 'add', target.triple, '--toolchain', name]);
     });
   }
 
   Future<List<RustTarget>> _getInstalledTargets() async {
-    final res = await runCommand("rustup", [
+    final res = await rustup.runCommand([
       'target',
       'list',
       '--toolchain',

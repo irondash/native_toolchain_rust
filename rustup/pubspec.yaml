@@ -1,0 +1,17 @@
+name: rustup
+description: "A new Flutter package project."
+version: 0.0.1
+homepage: https://github.com/irondash/native_toolchain_rust.git
+
+environment:
+  sdk: '>=3.4.0-190.0.dev <4.0.0'
+
+dependencies:
+  process: ^5.0.2
+  pub_semver: ^2.1.4
+  native_assets_cli: ^0.4.2
+
+dev_dependencies:
+  test: ^1.21.0
+
+
