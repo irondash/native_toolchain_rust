@@ -20,6 +20,8 @@ class Rustup {
 
   Rustup({
     required this.executablePath,
+    this.rustupHome,
+    this.cargoHome,
     this.logger,
   });
 
@@ -39,7 +41,7 @@ class Rustup {
   Future<void> installToolchain(String name) async {
     return await _mutex.protect(() async {
       _cachedToolchains = null;
-      runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
+      await runCommand(['toolchain', 'install', name, '--profile', 'minimal']);
     });
   }
 
@@ -72,6 +74,10 @@ class Rustup {
         .toList(growable: true);
   }
 
+  Future<void> uninstall() {
+    return runCommand(['self', 'uninstall', '-y']);
+  }
+
   Future<ProcessResult> runCommand(
     List<String> arguments, {
     Map<String, String>? environment,
@@ -80,7 +86,11 @@ class Rustup {
     return command.runCommand(
       executablePath,
       arguments,
-      environment: environment,
+      environment: {
+        if (environment != null) ...environment,
+        if (rustupHome != null) 'RUSTUP_HOME': rustupHome!,
+        if (cargoHome != null) 'CARGO_HOME': cargoHome!,
+      },
       logger: logger ?? this.logger,
     );
   }
@@ -109,6 +119,8 @@ class Rustup {
   }
 
   final String executablePath;
+  final String? rustupHome;
+  final String? cargoHome;
   final Logger? logger;
 }
 

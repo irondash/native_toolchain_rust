@@ -10,6 +10,7 @@ dependencies:
   process: ^5.0.2
   pub_semver: ^2.1.4
   native_assets_cli: ^0.4.2
+  http: 1.1.0
 
 dev_dependencies:
   test: ^1.21.0
