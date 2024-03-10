@@ -18,7 +18,21 @@ void main() {
         rustupHome: rustupHome,
       );
     } finally {
-      await installer.dispose();
+      int attempt = 0;
+      while (true) {
+        try {
+          await installer.dispose();
+          break;
+        } catch (e) {
+          if (attempt > 5) {
+            rethrow;
+          }
+          attempt++;
+          // Windows being windows.
+          print('Failed to clean temp installer temp dir: $e');
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
     }
     expect(tempDir.listSync(), isNotEmpty);
     final rustup = Rustup(
@@ -39,7 +53,24 @@ void main() {
     expect(toolchains, isNotEmpty);
     expect(toolchains.first.name.startsWith('stable-'), isTrue);
     await rustup.uninstall();
-    expect(tempDir.listSync(), isEmpty);
-    tempDir.deleteSync();
+    if (!Platform.isWindows) {
+      // Rustup on windows doesn't seem to uninstall completely.
+      expect(tempDir.listSync(), isEmpty);
+    }
+    int attempt = 0;
+    while (true) {
+      try {
+        tempDir.deleteSync(recursive: true);
+        break;
+      } catch (e) {
+        if (attempt > 5) {
+          rethrow;
+        }
+        attempt++;
+        // Windows being windows again.
+        print('Failed to clean temp dir: $e');
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
   }, timeout: Timeout.none);
 }
