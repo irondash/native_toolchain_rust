@@ -52,8 +52,8 @@ class _WindowsRustupInstaller extends RustupInstaller {
   _WindowsRustupInstaller({
     required this.tempDirectory,
     required this.scriptFile,
-    required ProcessManager processManager,
-  }) : super._(processManager: processManager);
+    required super.processManager,
+  }) : super._();
 
   static Future<_WindowsRustupInstaller> prepare(
       ProcessManager processManager) async {
@@ -88,8 +88,8 @@ class _UnixRustupInstaller extends RustupInstaller {
   _UnixRustupInstaller({
     required this.tempDirectory,
     required this.scriptFile,
-    required ProcessManager processManager,
-  }) : super._(processManager: processManager);
+    required super.processManager,
+  }) : super._();
 
   static Future<_UnixRustupInstaller> prepare(
       ProcessManager processManager) async {

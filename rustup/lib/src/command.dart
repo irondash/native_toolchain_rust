@@ -9,7 +9,9 @@ const String _kSeparator = "--";
 ProcessManager _processManager = LocalProcessManager();
 
 Future<T> withProcessManager<T>(
-    ProcessManager processManager, Future<T> run()) async {
+  ProcessManager processManager,
+  Future<T> Function() run,
+) async {
   final previous = _processManager;
   _processManager = processManager;
   try {

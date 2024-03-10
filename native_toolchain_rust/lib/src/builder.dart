@@ -73,7 +73,7 @@ class RustBuilder {
         dylibName: dylibName,
       );
     }
-    for (final source in this.dartBuildFiles) {
+    for (final source in dartBuildFiles) {
       output.dependencies.dependencies.add(
         buildConfig.packageRoot.resolve(source),
       );
