@@ -10,7 +10,7 @@ import 'package:path/path.dart' as path;
 
 class RustBuilder {
   RustBuilder({
-    required this.assetId,
+    required this.package,
     required this.toolchain,
     required this.manifestPath,
     required this.buildConfig,
@@ -18,7 +18,7 @@ class RustBuilder {
     this.logger,
   });
 
-  final String assetId;
+  final String package;
   final RustupToolchain toolchain;
   final String manifestPath;
   final BuildConfig buildConfig;
@@ -28,8 +28,24 @@ class RustBuilder {
   Future<void> run({required BuildOutput output}) async {
     final manifestPath = buildConfig.packageRoot.resolve(this.manifestPath);
     final manifestInfo = ManifestInfo.load(manifestPath);
-    final outDir = buildConfig.outDir.resolve('native_toolchain_rust/');
-    final targetTriple = buildConfig.target.toRust!.triple;
+    final outDir =
+        buildConfig.outputDirectory.resolve('native_toolchain_rust/');
+
+    if (buildConfig.dryRun) {
+      output.addAsset(NativeCodeAsset(
+        package: package,
+        name: manifestInfo.packageName,
+        linkMode: DynamicLoadingBundled(),
+        os: buildConfig.targetOS,
+      ));
+      return;
+    }
+
+    final target = RustTarget.from(
+      architecture: buildConfig.targetArchitecture!,
+      os: buildConfig.targetOS,
+      iosSdk: buildConfig.targetOS == OS.iOS ? buildConfig.targetIOSSdk : null,
+    )!;
 
     if (!buildConfig.dryRun) {
       await toolchain.rustup.runCommand(
@@ -44,28 +60,30 @@ class RustBuilder {
           manifestInfo.packageName,
           if (buildConfig.buildMode == BuildMode.release) '--release',
           '--target',
-          targetTriple,
+          target.triple,
           '--target-dir',
           outDir.toFilePath(),
         ],
-        environment: _buildEnvironment(outDir),
+        environment: _buildEnvironment(outDir, target),
         logger: logger,
       );
     }
 
     final effectiveOutDir = outDir
-        .resolve('$targetTriple/')
+        .resolve('${target.triple}/')
         .resolve('${buildConfig.buildMode.name}/');
 
     final dylibName =
-        buildConfig.targetOs.dylibFileName(manifestInfo.packageName);
-    final asset = Asset(
-      id: assetId,
-      linkMode: LinkMode.dynamic,
-      target: buildConfig.target,
-      path: AssetAbsolutePath(effectiveOutDir.resolve(dylibName)),
+        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
+    final asset = NativeCodeAsset(
+      package: package,
+      name: manifestInfo.packageName,
+      os: buildConfig.targetOS,
+      architecture: buildConfig.targetArchitecture,
+      linkMode: DynamicLoadingBundled(),
+      file: effectiveOutDir.resolve(dylibName),
     );
-    output.assets.add(asset);
+    output.addAsset(asset);
     if (!buildConfig.dryRun) {
       _addDependencies(
         output: output,
@@ -74,7 +92,7 @@ class RustBuilder {
       );
     }
     for (final source in dartBuildFiles) {
-      output.dependencies.dependencies.add(
+      output.addDependency(
         buildConfig.packageRoot.resolve(source),
       );
     }
@@ -93,22 +111,22 @@ class RustBuilder {
       if (parts[0] == dylibPath) {
         final dependencies = parts[1].trim().split(' ');
         for (final dependency in dependencies) {
-          output.dependencies.dependencies.add(Uri.file(dependency));
+          output.addDependency(Uri.file(dependency));
         }
       }
     }
   }
 
-  Map<String, String> _buildEnvironment(Uri outDir) {
-    if (buildConfig.targetOs == OS.android) {
+  Map<String, String> _buildEnvironment(Uri outDir, RustTarget target) {
+    if (buildConfig.targetOS == OS.android) {
       final ndkInfo =
-          NdkInfo.forCCompiler(buildConfig.cCompiler.cc!.toFilePath())!;
+          NdkInfo.forCCompiler(buildConfig.cCompiler.compiler!.toFilePath())!;
       final env = AndroidEnvironment(
         ndkInfo: ndkInfo,
         minSdkVersion: buildConfig.targetAndroidNdkApi!,
         targetTempDir: outDir.toFilePath(),
         toolchain: toolchain,
-        target: buildConfig.target.toRust!,
+        target: target,
       );
       return env.buildEnvironment();
     } else {

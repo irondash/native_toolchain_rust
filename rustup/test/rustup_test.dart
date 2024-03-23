@@ -1,4 +1,3 @@
-import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rustup/src/command.dart';
 import 'package:rustup/src/rustup.dart';
@@ -39,7 +38,7 @@ void main() {
         stdout: 'x86_64-unknown-linux-gnu\nx86_64-apple-darwin\n',
       ),
     ]);
-    withProcessManager(processManager, () async {
+    await withProcessManager(processManager, () async {
       final rustup = Rustup(executablePath: 'rustup');
 
       expect(await rustup.installedToolchains(), []);
@@ -51,8 +50,8 @@ void main() {
 
       final targets = await toolchain.installedTargets();
       expect(targets, [
-        Target.linuxX64.toRust,
-        Target.macOSX64.toRust,
+        RustTarget.fromTriple('x86_64-unknown-linux-gnu')!,
+        RustTarget.fromTriple('x86_64-apple-darwin')!,
       ]);
       expect(processManager, hasNoRemainingExpectations);
     });
@@ -71,7 +70,7 @@ void main() {
             'esp\n',
       ),
     ]);
-    withProcessManager(processManager, () async {
+    await withProcessManager(processManager, () async {
       final rustup = Rustup(executablePath: 'rustup');
       final toolchains = await rustup.installedToolchains();
       expect(toolchains.length, 2);
@@ -109,7 +108,7 @@ void main() {
         stdout: 'rustc 1.77.0-nightly (11f32b73e 2024-01-31)',
       ),
     ]);
-    withProcessManager(processManager, () async {
+    await withProcessManager(processManager, () async {
       final rustup = Rustup(executablePath: 'rustup');
       {
         final toolchain = (await rustup.getToolchain('stable'))!;

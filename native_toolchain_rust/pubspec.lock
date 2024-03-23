@@ -45,10 +45,10 @@ packages:
     dependency: transitive
     description:
       name: cli_config
-      sha256: "65c7830649e1f8247660f1b783effb460255d6e2c1ac94eb823cf1f84e59b288"
+      sha256: ac20a183a07002b700f0c25e61b7ee46b23c309d76ab7b7640a028f18e4d99ec
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.2"
+    version: "0.2.0"
   collection:
     dependency: "direct main"
     description:
@@ -189,10 +189,10 @@ packages:
     dependency: "direct main"
     description:
       name: native_assets_cli
-      sha256: "4eb8a94601af0acd50f7e75e1ad15c0db0b046b89256ee994776b6a6d49139b7"
+      sha256: "1a5c26b452433eb6764964f7110ee67564d1f3ce9bd6fe5ac450fb6af7842dc5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.5.2"
   node_preamble:
     dependency: transitive
     description:
@@ -440,13 +440,5 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  yaml_edit:
-    dependency: transitive
-    description:
-      name: yaml_edit
-      sha256: c566f4f804215d84a7a2c377667f546c6033d5b34b4f9e60dfb09d17c4e97826
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
 sdks:
   dart: ">=3.4.0-190.0.dev <4.0.0"

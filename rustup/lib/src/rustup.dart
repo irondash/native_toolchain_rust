@@ -25,6 +25,8 @@ class Rustup {
     this.logger,
   });
 
+  List<RustupToolchain>? _cachedToolchains;
+
   Future<List<RustupToolchain>> installedToolchains() async {
     return await _mutex.protect(() async {
       _cachedToolchains ??= await _getInstalledToolchains();
@@ -95,8 +97,6 @@ class Rustup {
     );
   }
 
-  List<RustupToolchain>? _cachedToolchains;
-
   /// Returns the path to the `rustup` executable, or `null` if it is not found.
   static String? _findExecutablePath() {
     final envPath = Platform.environment['PATH'];
@@ -126,59 +126,135 @@ class Rustup {
 
 class RustTarget {
   RustTarget({
-    required this.target,
+    required this.architecture,
+    required this.os,
     required this.triple,
+    this.iosSdk,
   });
 
-  final Target target;
+  final Architecture architecture;
+  final OS os;
+  final IOSSdk? iosSdk;
   final String triple;
 
   static RustTarget? fromTriple(String triple) {
-    return Target.values
-        .firstWhereOrNull((e) => e.toRust?.triple == triple)
-        ?.toRust;
+    return _targets.firstWhereOrNull((e) => e.triple == triple);
+  }
+
+  static RustTarget? from({
+    required Architecture architecture,
+    required OS os,
+    required IOSSdk? iosSdk,
+  }) {
+    return _targets.firstWhereOrNull(
+      (e) => e.architecture == architecture && e.os == os && e.iosSdk == iosSdk,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     if (other is RustTarget) {
-      return target == other.target && triple == other.triple;
+      return os == other.os &&
+          architecture == other.architecture &&
+          iosSdk == other.iosSdk &&
+          triple == other.triple;
     }
     return false;
   }
 
   @override
-  int get hashCode => Object.hash(target, triple);
-}
+  int get hashCode => Object.hash(
+        os,
+        architecture,
+        iosSdk,
+        triple,
+      );
 
-extension RustTargetExt on Target {
-  RustTarget? get toRust {
-    final triple = switch (this) {
-      Target.androidArm => 'arm-linux-androideabi',
-      Target.androidArm64 => 'armv7-linux-androideabi',
-      Target.androidIA32 => 'i686-linux-android',
-      Target.androidX64 => 'x86_64-linux-android',
-      Target.androidRiscv64 => null,
-      Target.fuchsiaArm64 => 'aarch64-unknown-fuchsia',
-      Target.fuchsiaX64 => 'x86_64-unknown-fuchsia',
-      Target.iOSArm => null,
-      Target.iOSArm64 => 'aarch64-apple-ios',
-      Target.iOSX64 => 'x86_64-apple-ios',
-      Target.linuxArm => 'armv7-unknown-linux-gnueabi',
-      Target.linuxArm64 => 'aarch64-unknown-linux-gnu',
-      Target.linuxIA32 => 'i686-unknown-linux-gnu',
-      Target.linuxRiscv32 => null,
-      Target.linuxRiscv64 => 'riscv64gc-unknown-linux-gnu',
-      Target.linuxX64 => 'x86_64-unknown-linux-gnu',
-      Target.macOSArm64 => 'aarch64-apple-darwin',
-      Target.macOSX64 => 'x86_64-apple-darwin',
-      Target.windowsArm64 => 'aarch64-pc-windows-msvc',
-      Target.windowsIA32 => 'i686-pc-windows-msvc',
-      Target.windowsX64 => 'x86_64-pc-windows-msvc',
-      _ => null,
-    };
-    return triple == null ? null : RustTarget(target: this, triple: triple);
-  }
+  static final _targets = [
+    RustTarget(
+      os: OS.android,
+      architecture: Architecture.arm,
+      triple: 'arm-linux-androideabi',
+    ),
+    RustTarget(
+      os: OS.android,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-linux-android',
+    ),
+    RustTarget(
+      os: OS.android,
+      architecture: Architecture.ia32,
+      triple: 'i686-linux-android',
+    ),
+    RustTarget(
+      os: OS.android,
+      architecture: Architecture.x64,
+      triple: 'x86_64-linux-android',
+    ),
+    RustTarget(
+      os: OS.fuchsia,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-unknown-fuchsia',
+    ),
+    RustTarget(
+      os: OS.fuchsia,
+      architecture: Architecture.x64,
+      triple: 'x86_64-unknown-fuchsia',
+    ),
+    RustTarget(
+      os: OS.iOS,
+      iosSdk: IOSSdk.iPhoneOS,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-apple-ios',
+    ),
+    RustTarget(
+      os: OS.iOS,
+      iosSdk: IOSSdk.iPhoneSimulator,
+      architecture: Architecture.x64,
+      triple: 'x86_64-apple-ios-sim',
+    ),
+    RustTarget(
+      os: OS.iOS,
+      iosSdk: IOSSdk.iPhoneSimulator,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-apple-ios-sim',
+    ),
+    RustTarget(
+      os: OS.macOS,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-apple-darwin',
+    ),
+    RustTarget(
+      os: OS.macOS,
+      architecture: Architecture.x64,
+      triple: 'x86_64-apple-darwin',
+    ),
+    RustTarget(
+      os: OS.windows,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-pc-windows-msvc',
+    ),
+    RustTarget(
+      os: OS.windows,
+      architecture: Architecture.ia32,
+      triple: 'i686-pc-windows-msvc',
+    ),
+    RustTarget(
+      os: OS.windows,
+      architecture: Architecture.x64,
+      triple: 'x86_64-pc-windows-msvc',
+    ),
+    RustTarget(
+      os: OS.linux,
+      architecture: Architecture.arm64,
+      triple: 'aarch64-unknown-linux-gnu',
+    ),
+    RustTarget(
+      os: OS.linux,
+      architecture: Architecture.x64,
+      triple: 'x86_64-unknown-linux-gnu',
+    ),
+  ];
 }
 
 class RustupToolchain {
