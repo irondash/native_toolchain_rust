@@ -2,6 +2,7 @@ name: native_toolchain_rust
 description: A library to invoke Rust installed on the host machine. Intended for building native assets.
 version: 0.0.1
 homepage: https://github.com/irondash/native_toolchain_rust.git
+publish_to: none
 
 environment:
   sdk: ">=3.4.0-190.0.dev <4.0.0"
@@ -9,7 +10,7 @@ environment:
 dependencies:
   collection: ^1.18.0
   logging: ^1.2.0
-  native_assets_cli: ^0.5.2
+  native_assets_cli: ^0.5.4
   path: ^1.9.0
   process: ^5.0.2
   pub_semver: ^2.1.4

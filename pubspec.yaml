@@ -1,6 +1,8 @@
-name: native_toolchain_rust
+name: native_toolchain_rust_workspace
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 dev_dependencies:
   melos: ^4.1.0
+  lints: ^3.0.0
+

@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
-import 'package:process/process.dart';
+import 'package:rustup/src/internal/command.dart';
 
 abstract class RustupInstaller {
-  static Future<RustupInstaller> create({ProcessManager? processManager}) {
-    final manager = processManager ?? LocalProcessManager();
+  static Future<RustupInstaller> create({Logger? logger}) {
     if (Platform.isWindows) {
-      return _WindowsRustupInstaller.prepare(manager);
+      return _WindowsRustupInstaller.prepare(logger: logger);
     } else {
-      return _UnixRustupInstaller.prepare(manager);
+      return _UnixRustupInstaller.prepare(logger: logger);
     }
   }
 
@@ -19,9 +19,9 @@ abstract class RustupInstaller {
     String? cargoHome,
     String? rustupHome,
   }) async {
-    final process = await _processManager.start(
+    final process = await runCommand(
+      _scriptPath(),
       [
-        _scriptPath(),
         '--default-toolchain',
         'none',
         '-y',
@@ -31,8 +31,9 @@ abstract class RustupInstaller {
         if (cargoHome != null) 'CARGO_HOME': cargoHome,
         if (rustupHome != null) 'RUSTUP_HOME': rustupHome,
       },
+      logger: _logger,
     );
-    final exitCode = await process.exitCode;
+    final exitCode = process.exitCode;
     if (exitCode != 0) {
       throw Exception('Failed to install rustup');
     }
@@ -41,22 +42,21 @@ abstract class RustupInstaller {
   Future<void> dispose();
 
   RustupInstaller._({
-    required ProcessManager processManager,
-  }) : _processManager = processManager;
+    Logger? logger,
+  }) : _logger = logger;
 
   String _scriptPath();
-  final ProcessManager _processManager;
+  final Logger? _logger;
 }
 
 class _WindowsRustupInstaller extends RustupInstaller {
   _WindowsRustupInstaller({
     required this.tempDirectory,
     required this.scriptFile,
-    required super.processManager,
+    required super.logger,
   }) : super._();
 
-  static Future<_WindowsRustupInstaller> prepare(
-      ProcessManager processManager) async {
+  static Future<_WindowsRustupInstaller> prepare({Logger? logger}) async {
     final script = await get(Uri.parse('https://win.rustup.rs/x86_64'));
     final tempDir = Directory.systemTemp.createTempSync('rustup');
     // Save script to temp dir
@@ -66,7 +66,7 @@ class _WindowsRustupInstaller extends RustupInstaller {
     return _WindowsRustupInstaller(
       tempDirectory: tempDir,
       scriptFile: scriptFile,
-      processManager: processManager,
+      logger: logger,
     );
   }
 
@@ -88,11 +88,10 @@ class _UnixRustupInstaller extends RustupInstaller {
   _UnixRustupInstaller({
     required this.tempDirectory,
     required this.scriptFile,
-    required super.processManager,
+    required super.logger,
   }) : super._();
 
-  static Future<_UnixRustupInstaller> prepare(
-      ProcessManager processManager) async {
+  static Future<_UnixRustupInstaller> prepare({Logger? logger}) async {
     final script = await get(Uri.parse('https://sh.rustup.rs'));
     final tempDir = Directory.systemTemp.createTempSync('rustup');
     // Save script to temp dir
@@ -100,11 +99,15 @@ class _UnixRustupInstaller extends RustupInstaller {
     final scriptFile = File(scriptPath);
     await scriptFile.writeAsBytes(script.bodyBytes);
     // Make script executable
-    await processManager.run(['chmod', '+x', scriptPath]);
+    await runCommand(
+      'chmod',
+      ['+x', scriptPath],
+      logger: logger,
+    );
     return _UnixRustupInstaller(
       tempDirectory: tempDir,
       scriptFile: scriptFile,
-      processManager: processManager,
+      logger: logger,
     );
   }
 

@@ -1,9 +1,9 @@
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rustup/src/command.dart';
+import 'package:rustup/src/internal/command.dart';
 import 'package:rustup/src/rustup.dart';
 import 'package:test/test.dart';
 
-import 'fake_process_manager.dart';
+import 'package:rustup/src/internal/fake_process_manager.dart';
 
 void main() {
   test('rustup with no toolchains', () async {

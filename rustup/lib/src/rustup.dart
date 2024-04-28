@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rustup/src/command.dart' as command;
+import 'package:rustup/src/internal/command.dart' as command;
 import 'package:rustup/src/mutex.dart';
 
 final _mutex = Mutex();
@@ -170,6 +170,11 @@ class RustTarget {
         triple,
       );
 
+  @override
+  String toString() => triple;
+
+  static List<RustTarget> get allTargets => _targets;
+
   static final _targets = [
     RustTarget(
       os: OS.android,
@@ -211,7 +216,7 @@ class RustTarget {
       os: OS.iOS,
       iosSdk: IOSSdk.iPhoneSimulator,
       architecture: Architecture.x64,
-      triple: 'x86_64-apple-ios-sim',
+      triple: 'x86_64-apple-ios',
     ),
     RustTarget(
       os: OS.iOS,
