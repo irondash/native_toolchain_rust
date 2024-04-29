@@ -23,13 +23,20 @@ jobs:
           channel: "main"
       - name: enable native assets
         run: flutter config --enable-native-assets
-      - name: Install Melos
+      - name: install melos
         run: dart pub global activate melos
-      - name: Melos Boostrap
+      - name: melos boostrap
         run: melos bootstrap
-      - name: Flutter Format
+      - name: flutter format
         run: melos exec -c 1 dart format . --output=none --set-exit-if-changed
-      - name: Flutter Analyze
+      - name: flutter analyze
         run: melos exec -c 1 flutter analyze
-      - name: Futter Test
-        run: melos exec -c 1 flutter test --verbose
+      - name: futter test
+        run: melos exec -c 1 flutter test
+      # Run Dart test directly for the package (not through flutter)
+      - name: dart package Test
+        run: dart --enable-experiment=native-assets test
+        working-directory: example/dart_package
+      - name: dart run
+        run: dart --enable-experiment=native-assets run example/dart_package_example.dart
+        working-directory: example/dart_package
