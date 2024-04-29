@@ -1,0 +1,42 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+name: Check and Lint
+
+jobs:
+  check_and_lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 #v2.7.0
+      - uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # 2.16.0
+        with:
+          channel: "main"
+      - name: enable native assets
+        run: flutter config --enable-native-assets
+      - name: install melos
+        run: dart pub global activate melos
+      - name: melos boostrap
+        run: melos bootstrap
+      - name: flutter format
+        run: melos exec -c 1 dart format . --output=none --set-exit-if-changed
+      - name: flutter analyze
+        run: melos exec -c 1 flutter analyze
+      - name: futter test
+        run: melos exec -c 1 flutter test
+      # Run Dart test directly for the package (not through flutter)
+      - name: dart package Test
+        run: dart --enable-experiment=native-assets test
+        working-directory: example/dart_package
+      - name: dart run
+        run: dart --enable-experiment=native-assets run example/dart_package_example.dart
+        working-directory: example/dart_package
