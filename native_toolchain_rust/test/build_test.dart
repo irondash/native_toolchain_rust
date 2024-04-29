@@ -128,7 +128,51 @@ void main() async {
     skip: !Platform.isMacOS,
   );
   test(
-    'Android project',
+    'windows project',
+    () async {
+      await withFlutterExampleProject((uri) async {
+        for (final config in ['debug', 'profile', 'release']) {
+          await runCommand(
+            'flutter',
+            ['build', 'windows', '--$config'],
+            workingDirectory: uri.toFilePath(),
+          );
+
+          // Check if the library is built
+          // final library = File.fromUri(uri.resolve(
+          //   'build/app/intermediates/merged_jni_libs/$config/out/arm64-v8a/libflutter_ffi_plugin.so',
+          // ));
+          // expect(library.existsSync(), isTrue);
+        }
+      });
+    },
+    timeout: const Timeout(Duration(minutes: 10)),
+    skip: !Platform.isWindows,
+  );
+  test(
+    'linux project',
+    () async {
+      await withFlutterExampleProject((uri) async {
+        for (final config in ['debug', 'profile', 'release']) {
+          await runCommand(
+            'flutter',
+            ['build', 'linux', '--$config'],
+            workingDirectory: uri.toFilePath(),
+          );
+
+          // Check if the library is built
+          // final library = File.fromUri(uri.resolve(
+          //   'build/app/intermediates/merged_jni_libs/$config/out/arm64-v8a/libflutter_ffi_plugin.so',
+          // ));
+          // expect(library.existsSync(), isTrue);
+        }
+      });
+    },
+    timeout: const Timeout(Duration(minutes: 10)),
+    skip: !Platform.isLinux,
+  );
+  test(
+    'android project',
     () async {
       await withFlutterExampleProject((uri) async {
         for (final config in ['debug', 'profile', 'release']) {
