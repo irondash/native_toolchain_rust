@@ -6,3 +6,6 @@ packages:
   - rustup
   - native_doctor
   - example/dart_package
+  - example/flutter_package
+  - example/flutter_package/example
+

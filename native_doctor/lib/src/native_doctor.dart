@@ -67,7 +67,7 @@ class NativeDoctor {
     Uri? flutterRoot;
 
     final packageConfigExtraData = packageConfig.extraData;
-    if (pubspec.environment?["flutter"] != null &&
+    if (pubspec.dependencies["flutter"] != null &&
         packageConfigExtraData is Map) {
       final root = packageConfigExtraData['flutterRoot'] as String?;
       if (root != null) {

@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "native_doctor",
+            "cwd": "native_doctor",
+            "request": "launch",
+            "type": "dart",
+            "console": "terminal",
+            "args": [
+                "--path",
+                "${workspaceRoot}/example/flutter_package/example",
+            ]
+        },
+        {
+            "name": "flutter example",
+            "request": "launch",
+            "type": "dart",
+            "cwd": "example/flutter_package/example",
+        },
+        {
+            "name": "flutter example (profile)",
+            "request": "launch",
+            "type": "dart",
+            "cwd": "example/flutter_package/example",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "flutter example (release)",
+            "request": "launch",
+            "type": "dart",
+            "cwd": "example/flutter_package/example",
+            "flutterMode": "release"
+        },
+    ]
+}

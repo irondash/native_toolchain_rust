@@ -5,3 +5,7 @@ version = 3
 [[package]]
 name = "dart_ffi_plugin"
 version = "0.1.0"
+
+[[package]]
+name = "flutter_ffi_plugin"
+version = "0.1.0"

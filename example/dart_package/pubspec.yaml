@@ -6,7 +6,6 @@ version: 1.0.0
 environment:
   sdk: ^3.5.0-90.0.dev
 
-# Add regular dependencies here.
 dependencies:
   native_toolchain_rust: ^0.0.1
   native_assets_cli: ^0.5.4

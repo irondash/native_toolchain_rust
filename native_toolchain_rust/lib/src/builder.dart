@@ -153,12 +153,16 @@ class RustBuilder {
     final outDir =
         buildConfig.outputDirectory.resolve('native_toolchain_rust/');
 
+    final dylibName =
+        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
+
     if (buildConfig.dryRun) {
       output.addAsset(NativeCodeAsset(
         package: package,
         name: manifestInfo.packageName,
         linkMode: DynamicLoadingBundled(),
         os: buildConfig.targetOS,
+        file: Uri.file(dylibName),
       ));
       return;
     }
@@ -204,8 +208,6 @@ class RustBuilder {
         .resolve('${target.triple}/')
         .resolve('${buildConfig.buildMode.name}/');
 
-    final dylibName =
-        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
     final asset = NativeCodeAsset(
       package: package,
       name: manifestInfo.packageName,
