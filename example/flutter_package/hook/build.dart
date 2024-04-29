@@ -15,7 +15,13 @@ void main(List<String> args) async {
       await builder.run(output: output);
     });
   } catch (e) {
-    stderr.writeln(e);
+    if (Platform.isWindows || Platform.isLinux) {
+      // CMake build seems to swallow error written to stdout.
+      stderr.writeln(e);
+    } else {
+      // While Xcode build prints the error twice unless when written to stderr.
+      stdout.writeln(e.toString());
+    }
     exit(1);
   }
 }
