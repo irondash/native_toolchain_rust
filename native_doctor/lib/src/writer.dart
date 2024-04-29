@@ -33,9 +33,9 @@ abstract class Writer implements TextStyler, ActionLogger {
 class AnsiWriter implements Writer, ActionLogger {
   AnsiWriter() {
     if (hasTerminal) {
-      wrapWidth = math.min(io.stdout.terminalColumns, 120);
+      wrapWidth = math.min(io.stdout.terminalColumns, 100);
     } else {
-      wrapWidth = 120;
+      wrapWidth = 100;
     }
   }
 
