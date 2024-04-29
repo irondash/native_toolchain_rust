@@ -15,8 +15,7 @@ void main(List<String> args) async {
       await builder.run(output: output);
     });
   } catch (e) {
-    // ignore: avoid_print
-    print(e);
+    stderr.writeln(e);
     exit(1);
   }
 }
