@@ -15,13 +15,9 @@ void main(List<String> args) async {
       await builder.run(output: output);
     });
   } catch (e) {
-    if (Platform.isWindows || Platform.isLinux) {
-      // CMake build seems to swallow error written to stdout.
-      stderr.writeln(e);
-    } else {
-      // While Xcode build prints the error twice unless when written to stderr.
-      stdout.writeln(e.toString());
-    }
+    // FIXME(knopp): Figure out where to log the error
+    // https://github.com/flutter/flutter/issues/147544
+    stdout.writeln(e);
     exit(1);
   }
 }
