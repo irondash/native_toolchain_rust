@@ -26,7 +26,8 @@ class RunNativeDoctorException extends RustToolchainException {
 
   @override
   String toString() {
-    return '$message\n'
+    return '\n'
+        '$message\n'
         'Please run native_doctor in your project to fix the issue:\n'
         '-----------------------------------------------------------\n'
         'dart pub global activate native_doctor\n'
