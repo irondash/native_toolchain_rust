@@ -10,8 +10,8 @@ Currently supported native toolchains:
 
 In your project directory, run:
 ```bash
-pub global activate native_doctor
-pub global run native_doctor
+dart pub global activate native_doctor
+dart pub global run native_doctor
 ```
 
 ## Features
