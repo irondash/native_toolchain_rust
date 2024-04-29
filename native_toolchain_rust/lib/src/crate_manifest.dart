@@ -23,7 +23,8 @@ class CrateManifestInfo {
 
   final String packageName;
 
-  static CrateManifestInfo parseManifest(String manifest, {final String? fileName}) {
+  static CrateManifestInfo parseManifest(String manifest,
+      {final String? fileName}) {
     final toml = TomlDocument.parse(manifest);
     final package = toml.toMap()['package'];
     if (package == null) {
