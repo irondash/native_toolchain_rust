@@ -30,4 +30,4 @@ jobs:
       - name: Flutter Analyze
         run: melos exec -c 1 flutter analyze
       - name: Futter Test
-        run: melos exec -c 1 flutter test
+        run: melos exec -c 1 flutter test --verbose
