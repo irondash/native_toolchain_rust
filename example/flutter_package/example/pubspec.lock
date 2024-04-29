@@ -280,14 +280,14 @@ packages:
       path: "../../../native_toolchain_rust"
       relative: true
     source: path
-    version: "0.1.0-dev.1"
+    version: "0.1.0-dev.2"
   native_toolchain_rust_common:
     dependency: "direct overridden"
     description:
       path: "../../../native_toolchain_rust_common"
       relative: true
     source: path
-    version: "0.1.0-dev.1"
+    version: "0.1.0-dev.2"
   node_preamble:
     dependency: transitive
     description:
@@ -358,7 +358,7 @@ packages:
       path: "../../../rustup"
       relative: true
     source: path
-    version: "0.1.0-dev.1"
+    version: "0.1.0-dev.2"
   shelf:
     dependency: transitive
     description:
