@@ -163,7 +163,7 @@ void main() async {
 
           // Check if the library is built
           final library = File.fromUri(uri.resolve(
-            'build/linux/${Architecture.current}/$config/bundle/libflutter_ffi_plugin.so',
+            'build/linux/${Architecture.current}/$config/bundle/lib/libflutter_ffi_plugin.so',
           ));
           expect(library.existsSync(), isTrue);
         }
