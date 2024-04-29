@@ -41,7 +41,7 @@ jobs:
       - name: futter test
         run: melos exec -c 1 flutter test
       # Run Dart test directly for the package (not through flutter)
-      - name: dart package test
+      - name: dart test
         run: dart --enable-experiment=native-assets test
         working-directory: example/dart_package
       - name: dart run
