@@ -128,7 +128,7 @@ class NativeDoctor {
 
     if (manifests.isEmpty) {
       writer.printMessage(
-        'No deppendency containing ${NativeManifest.fileName} found. Nothing to check.',
+        'No dependency containing ${NativeManifest.fileName} found. Nothing to check.',
       );
       writer.emptyLine();
       return;
@@ -315,5 +315,6 @@ void run(List<String> arguments) async {
     ));
     writer.emptyLine();
     writer.printMessage(e.toString());
+    exit(1);
   }
 }

@@ -195,7 +195,7 @@ class RustBuilder {
           '--target-dir',
           outDir.toFilePath(),
         ],
-        environment: _buildEnvironment(
+        environment: await _buildEnvironment(
           outDir,
           target,
           toolchain.toolchain,
@@ -250,11 +250,11 @@ class RustBuilder {
     }
   }
 
-  Map<String, String> _buildEnvironment(
+  Future<Map<String, String>> _buildEnvironment(
     Uri outDir,
     RustTarget target,
     RustupToolchain toolchain,
-  ) {
+  ) async {
     if (buildConfig.targetOS == OS.android) {
       final ndkInfo =
           NdkInfo.forCCompiler(buildConfig.cCompiler.compiler!.toFilePath())!;

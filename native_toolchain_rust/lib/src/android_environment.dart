@@ -83,7 +83,7 @@ class AndroidEnvironment {
   /// Target being built.
   final RustTarget target;
 
-  Map<String, String> buildEnvironment() {
+  Future<Map<String, String>> buildEnvironment() async {
     final toolchainPath = ndkInfo.toolchainPath;
 
     final exe = Platform.isWindows ? '.exe' : '';
@@ -131,7 +131,7 @@ class AndroidEnvironment {
       cxxFlagsKey: cxxFlagsValue,
       ranlibKey: ranlibValue,
       rustFlagsKey: rustFlagsValue,
-      linkerKey: wrapper.linkerWrapperPath(),
+      linkerKey: await wrapper.linkerWrapperPath(),
       // Recognized by main() so we know when we're acting as a wrapper
       '_CARGOKIT_NDK_LINK_TARGET': targetArg,
       '_CARGOKIT_NDK_LINK_CLANG': ccValue,

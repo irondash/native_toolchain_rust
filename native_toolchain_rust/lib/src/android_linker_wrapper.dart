@@ -59,7 +59,7 @@ class AndroidLinkerWrapper {
     required this.toolchain,
   });
 
-  String linkerWrapperPath() {
+  Future<String> linkerWrapperPath() async {
     String wrapperRoot = path.join(tempDir, 'linker_wrapper_1.0');
     final exe = Platform.isWindows ? '.exe' : '';
     String executablePath =
@@ -70,7 +70,7 @@ class AndroidLinkerWrapper {
       File(path.join(wrapperRoot, 'Cargo.lock')).writeAsStringSync(_cargoLock);
       Directory(path.join(wrapperRoot, 'src')).createSync();
       File(path.join(wrapperRoot, 'src', 'main.rs')).writeAsStringSync(_mainRs);
-      runCommand(
+      await runCommand(
         toolchain.rustup.executablePath,
         [
           'run',
