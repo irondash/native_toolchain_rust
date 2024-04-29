@@ -21,6 +21,17 @@ jobs:
       - uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # 2.16.0
         with:
           channel: "main"
+      - name: Set up Java
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 #v4.2.1
+        with:
+          distribution: "temurin"
+          java-version: 17
+      - name: Install GTK
+        if: (matrix.os == 'ubuntu-latest')
+        run: sudo apt-get update && sudo apt-get install libgtk-3-dev
+      - name: Install ninja-build
+        if: (matrix.os == 'ubuntu-latest')
+        run: sudo apt-get update && sudo apt-get install ninja-build
       - name: enable native assets
         run: flutter config --enable-native-assets
       - name: install melos
@@ -31,10 +42,12 @@ jobs:
         run: melos exec -c 1 dart format . --output=none --set-exit-if-changed
       - name: flutter analyze
         run: melos exec -c 1 flutter analyze
+      - name: native doctor
+        run: dart native_doctor/bin/native_doctor.dart --path example/flutter_package/example --yes
       - name: futter test
         run: melos exec -c 1 flutter test
       # Run Dart test directly for the package (not through flutter)
-      - name: dart package Test
+      - name: dart test
         run: dart --enable-experiment=native-assets test
         working-directory: example/dart_package
       - name: dart run
