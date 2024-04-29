@@ -1,6 +1,6 @@
 name: native_doctor
 description: A tool that analyzes Flutter and Dart project dependencies, find requirements for native toolchains and, if possible, resolves issues.
-version: 0.1.0-dev.2
+version: 0.1.0-dev.3
 repository: https://github.com/irondash/native_toolchain_rust
 
 environment:
@@ -11,10 +11,10 @@ executables:
 
 # Add regular dependencies here.
 dependencies:
-  native_toolchain_rust_common: ^0.1.0-dev.1
+  native_toolchain_rust_common: ^0.1.0-dev.2
   args: ^2.4.2
   package_config: ^2.1.0
-  rustup: ^0.1.0-dev.1
+  rustup: ^0.1.0-dev.2
   pub_semver: ^2.1.4
   yaml: ^3.1.2
   pubspec_parse: ^1.2.3

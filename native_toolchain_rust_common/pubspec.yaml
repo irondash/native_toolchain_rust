@@ -1,6 +1,6 @@
 name: native_toolchain_rust_common
 description: Common code for native_toolchain_rust and native_doctor.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 homepage: https://github.com/irondash/native_toolchain_rust.git
 
 environment:
