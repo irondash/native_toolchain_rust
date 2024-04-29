@@ -1,0 +1,33 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+name: Check and Lint
+
+jobs:
+  check_and_lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 #v2.7.0
+      - uses: subosito/flutter-action@cc97e1648fff6ca5cc647fa67f47e70f7895510b # 2.11.0
+        with:
+          channel: "main"
+      - name: Install Melos
+        run: dart pub global activate melos
+      - name: Melos Boostrap
+        run: melos bootstrap
+      - name: Flutter Format
+        run: melos exec -c 1 dart format . --output=none --set-exit-if-changed
+      - name: Flutter Analyze
+        run: melos exec -c 1 flutter analyze
+      - name: Futter Test
+        run: melos exec -c 1 flutter test
