@@ -132,18 +132,18 @@ void main() async {
     'windows project',
     () async {
       await withFlutterExampleProject((uri) async {
-        for (final config in ['debug', 'profile', 'release']) {
+        for (final config in ['Debug', 'Profile', 'Release']) {
           await runCommand(
             'flutter',
-            ['build', 'windows', '--$config'],
+            ['build', 'windows', '--${config.toLowerCase()}'],
             workingDirectory: uri.toFilePath(),
           );
 
           // Check if the library is built
-          // final library = File.fromUri(uri.resolve(
-          //   'build/app/intermediates/merged_jni_libs/$config/out/arm64-v8a/libflutter_ffi_plugin.so',
-          // ));
-          // expect(library.existsSync(), isTrue);
+          final library = File.fromUri(uri.resolve(
+            'build/windows/${Architecture.current}/runner/$config/flutter_ffi_plugin.dll',
+          ));
+          expect(library.existsSync(), isTrue);
         }
       });
     },
