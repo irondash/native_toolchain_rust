@@ -21,6 +21,8 @@ jobs:
       - uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1 # 2.16.0
         with:
           channel: "main"
+      - name: enable native assets
+        run: flutter config --enable-native-assets
       - name: Install Melos
         run: dart pub global activate melos
       - name: Melos Boostrap
