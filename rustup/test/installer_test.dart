@@ -29,7 +29,7 @@ void main() {
           }
           attempt++;
           // Windows being windows.
-          print('Failed to clean temp installer temp dir: $e');
+          print('Failed to clean installer temp dir: $e');
           await Future.delayed(const Duration(seconds: 1));
         }
       }
