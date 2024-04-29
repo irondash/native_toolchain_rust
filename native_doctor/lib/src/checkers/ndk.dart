@@ -181,6 +181,39 @@ class NdkToolchainChecker extends ToolchainChecker {
     }
   }
 
+  static Version? findBestNdkKversion({
+    required String sdkManagerOutput,
+    required Version minimumVersion,
+  }) {
+    Version? bestVersion;
+    final lines = sdkManagerOutput.split('\n');
+    for (var line in lines) {
+      if (line.trim().startsWith('ndk;')) {
+        final columns = line.split('|');
+        if (columns.length < 3) {
+          continue;
+        }
+        // Pre-release versions have another string in the second column, i.e.
+        // 27.0.11718014 rc1
+        final isPrerelease = columns[1].trim().split(' ').length > 1;
+        final version = columns[0].split(';').last.trim();
+        final parsedVersion = Version.parse(version);
+        if (parsedVersion >= minimumVersion &&
+            (bestVersion == null || parsedVersion > bestVersion)) {
+          // Use prerelease only if there is no stable version.
+          if (isPrerelease && bestVersion != null) {
+            continue;
+          }
+          if (minimumVersion < parsedVersion) {
+            bestVersion = parsedVersion;
+          }
+        }
+      }
+    }
+
+    return bestVersion;
+  }
+
   @override
   Future<void> fix(ActionLogger logger) async {
     if (!needNewerVersion) {
@@ -203,21 +236,17 @@ class NdkToolchainChecker extends ToolchainChecker {
         ['--list'],
         logger: doctor.verboseLogger,
       );
-      final ndkVersions = list.stdout
-          .toString()
-          .split('\n')
-          .where((line) => line.trim().startsWith('ndk;'))
-          .map((line) => line.trim().split(';')[1])
-          .map((line) => line.split(' ')[0].trim())
-          .map(Version.parse);
-      latestVersion = maxBy(ndkVersions, (v) => v);
+      latestVersion = findBestNdkKversion(
+        sdkManagerOutput: list.stdout,
+        minimumVersion: minimumVersion!,
+      );
       if (latestVersion == null) {
         throw Exception('Failed to find latest NDK version');
       }
     });
     if (latestVersion! < minimumVersion!) {
       doctor.writer.printMessage(
-          'NO NDK version available that meets the minimum requirement.');
+          'No NDK version available that meets the minimum requirement.');
       return;
     }
     await logger.logAction('Installing NDK $latestVersion', () async {

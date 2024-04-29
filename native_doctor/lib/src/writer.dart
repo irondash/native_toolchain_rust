@@ -100,6 +100,14 @@ class AnsiWriter implements Writer, ActionLogger {
     String prefix = '',
     TextColor? prefixColor,
   }) {
+    if (message.contains('\n')) {
+      final lines = message.split('\n');
+      for (final line in lines) {
+        printMessage(line, prefix: prefix, prefixColor: prefixColor);
+      }
+      return;
+    }
+
     final words = message.split(' ');
     final buffer = StringBuffer();
 

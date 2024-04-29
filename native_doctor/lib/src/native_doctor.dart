@@ -18,11 +18,13 @@ class ToolOptions {
     required this.yes,
     required this.verbose,
     required this.path,
+    required this.writer,
   });
 
   final bool verbose;
   final bool yes;
   final Directory path;
+  final Writer writer;
 }
 
 class NativeDoctor {
@@ -40,25 +42,28 @@ class NativeDoctor {
   final List<OS> projectPlatforms;
   final Uri? flutterRoot;
 
-  final Writer writer = AnsiWriter();
+  Writer get writer => options.writer;
   final verboseLogger = Logger('verbose');
 
   static Future<NativeDoctor> withOptions(ToolOptions options) async {
     final projectUri = Uri.directory(options.path.path);
+
+    final pubspecUri = projectUri.resolve('pubspec.yaml');
+    final pubspecFile = File.fromUri(pubspecUri);
+    if (!await pubspecFile.exists()) {
+      throw ToolError(
+          'Could not find pubspec.yaml in "${projectUri.toFilePath()}".\n'
+          'Path must be a Dart or Flutter project.');
+    }
+    final pubspecContent = await pubspecFile.readAsString();
+    final pubspec = Pubspec.parse(pubspecContent, sourceUrl: pubspecUri);
+
     final packageConfig = await findPackageConfig(options.path);
     if (packageConfig == null) {
       throw ToolError(
         'Could not find package config. Make sure to run `pub get` first.',
       );
     }
-    final pubspecUri = projectUri.resolve('pubspec.yaml');
-    final pubspecFile = File.fromUri(pubspecUri);
-    if (!await pubspecFile.exists()) {
-      throw ToolError('Could not find pubspec.yaml in the project root.');
-    }
-    final pubspecContent = await pubspecFile.readAsString();
-    final pubspec = Pubspec.parse(pubspecContent, sourceUrl: pubspecUri);
-
     Uri? flutterRoot;
 
     final packageConfigExtraData = packageConfig.extraData;
@@ -122,9 +127,8 @@ class NativeDoctor {
     );
 
     if (manifests.isEmpty) {
-      writer.emptyLine();
       writer.printMessage(
-        'No package found with native manifest file (${Manifest.fileName}).',
+        'No deppendency containing ${Manifest.fileName} found. Nothing to check.',
       );
       writer.emptyLine();
       return;
@@ -262,19 +266,20 @@ ArgParser buildParser() {
     );
 }
 
-void printUsage(ArgParser argParser) {
-  print('Usage: dart native_doctor.dart <flags> [arguments]');
-  print(argParser.usage);
+void printUsage(ArgParser argParser, Writer writer) {
+  writer.printMessage('Usage: native_doctor <flags> [arguments]');
+  writer.printMessage(argParser.usage, prefix: '  ');
 }
 
 void run(List<String> arguments) async {
+  final writer = AnsiWriter();
   final ArgParser argParser = buildParser();
   try {
     final ArgResults results = argParser.parse(arguments);
 
     // Process the parsed arguments.
     if (results.wasParsed('help')) {
-      printUsage(argParser);
+      printUsage(argParser, writer);
       return;
     }
     if (results.wasParsed('version')) {
@@ -288,6 +293,7 @@ void run(List<String> arguments) async {
       path: results.wasParsed('path')
           ? Directory(results['path'])
           : Directory.current,
+      writer: writer,
     );
 
     if (options.path.existsSync()) {
@@ -298,11 +304,16 @@ void run(List<String> arguments) async {
     }
   } on FormatException catch (e) {
     // Print usage information if an invalid argument was provided.
-    print(e.message);
-    print('');
-    printUsage(argParser);
+    writer.printMessage(e.message);
+    writer.emptyLine();
+    printUsage(argParser, writer);
   } on Exception catch (e) {
-    print('Native doctor failed with error:');
-    print(e);
+    writer.emptyLine();
+    writer.printMessage(writer.color(
+      'Native doctor failed with error:',
+      TextColor.red,
+    ));
+    writer.emptyLine();
+    writer.printMessage(e.toString());
   }
 }

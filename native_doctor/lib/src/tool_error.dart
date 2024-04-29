@@ -1,4 +1,4 @@
-class ToolError extends Error {
+class ToolError implements Exception {
   final String message;
 
   ToolError(this.message);
