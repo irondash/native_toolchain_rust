@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
@@ -161,10 +162,10 @@ void main() async {
           );
 
           // Check if the library is built
-          // final library = File.fromUri(uri.resolve(
-          //   'build/app/intermediates/merged_jni_libs/$config/out/arm64-v8a/libflutter_ffi_plugin.so',
-          // ));
-          // expect(library.existsSync(), isTrue);
+          final library = File.fromUri(uri.resolve(
+            'build/linux/${Architecture.current}/$config/bundle/libflutter_ffi_plugin.so',
+          ));
+          expect(library.existsSync(), isTrue);
         }
       });
     },
