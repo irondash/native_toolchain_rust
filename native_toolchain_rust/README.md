@@ -73,7 +73,7 @@ external int sum(
 
 For complete examples see the [example](../example) directory.
 
-## Usage of packages with Rust native assets
+## Using packages with Rust native assets
 
 Package that has Rust code in it depends on Rust toolchain to be installed on machine of developer that uses the package. To make this as frictionless as possible, `native_toolchain_rust` detects if Rust toolchain is installed and up-do-date, and if not suggests running [`native_doctor`](https://pub.dev/packages/native_doctor) tool to automatically install and configure necessary toolchains.
 
