@@ -71,7 +71,7 @@ external int sum(
 );
 ```
 
-For complete examples see the [example](example) directory.
+For complete examples see the [example](../example) directory.
 
 ## Usage of packages with Rust native assets
 
