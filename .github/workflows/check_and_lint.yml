@@ -36,6 +36,8 @@ jobs:
         run: melos exec -c 1 dart format . --output=none --set-exit-if-changed
       - name: flutter analyze
         run: melos exec -c 1 flutter analyze
+      - name: native doctor
+        run: dart native_doctor/bin/native_doctor.dart --path example/flutter_package/example --yes
       - name: futter test
         run: melos exec -c 1 flutter test
       # Run Dart test directly for the package (not through flutter)

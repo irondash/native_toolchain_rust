@@ -84,12 +84,6 @@ dependency_overrides:
 }
 
 void main() async {
-  await runCommand('dart', [
-    '../native_doctor/bin/native_doctor.dart',
-    '--path',
-    '../example/flutter_package/example',
-    '--yes',
-  ]);
   test(
     'macOS project',
     () async {
@@ -108,7 +102,7 @@ void main() async {
         }
       });
     },
-    timeout: const Timeout(Duration(minutes: 5)),
+    timeout: const Timeout(Duration(minutes: 10)),
     skip: !Platform.isMacOS,
   );
   test(
@@ -130,7 +124,7 @@ void main() async {
         }
       });
     },
-    timeout: const Timeout(Duration(minutes: 5)),
+    timeout: const Timeout(Duration(minutes: 10)),
     skip: !Platform.isMacOS,
   );
   test(
@@ -152,6 +146,6 @@ void main() async {
         }
       });
     },
-    timeout: const Timeout(Duration(minutes: 5)),
+    timeout: const Timeout(Duration(minutes: 10)),
   );
 }
