@@ -42,7 +42,7 @@ void main(List<String> args) async {
 }
 ```
 
-This assumes that your rust code is located in `rust` directory in package root.
+This assumes that your rust code is located in `rust` directory in package root. Crate must be a `cdylib`.
 
 3. Add `native_manifest.yaml` file to your package root. This step is not strictly necessary, but it will let [`native_doctor`](https://pub.dev/packages/native_doctor) know what the toolchain requirements for your packages are.
 
@@ -71,7 +71,7 @@ external int sum(
 );
 ```
 
-Currently only `cdylib` rust crate type is supported. For complete examples see the [example](example) directory.
+For complete examples see the [example](example) directory.
 
 ## Usage of packages with Rust native assets
 
