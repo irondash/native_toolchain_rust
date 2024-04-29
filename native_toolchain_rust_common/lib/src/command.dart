@@ -37,14 +37,18 @@ class CommandFailedException implements Exception {
     final stdout = result.stdout.toString().trim();
     final stderr = result.stderr.toString().trim();
     return [
-      "External Command: $executable ${arguments.map((e) => '"$e"').join(' ')}",
+      "Command: $executable ${arguments.map((e) => '"$e"').join(' ')}",
       "Returned Exit Code: ${result.exitCode}",
       _kSeparator,
-      "STDOUT:",
-      if (stdout.isNotEmpty) stdout,
-      _kSeparator,
-      "STDERR:",
-      if (stderr.isNotEmpty) stderr,
+      if (stdout.isNotEmpty) ...[
+        "STDOUT:",
+        stdout,
+        _kSeparator,
+      ],
+      if (stderr.isNotEmpty) ...[
+        "STDERR:",
+        stderr,
+      ],
     ].join('\n');
   }
 }

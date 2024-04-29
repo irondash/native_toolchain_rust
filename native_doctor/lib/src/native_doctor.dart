@@ -5,11 +5,11 @@ import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_doctor/src/checkers/ndk.dart';
-import 'package:native_doctor/src/manifest.dart';
 import 'package:native_doctor/src/writer.dart';
 import 'package:native_doctor/src/checkers/rustup.dart';
 import 'package:native_doctor/src/tool_error.dart';
 import 'package:native_doctor/src/toolchain_checker.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:package_config/package_config.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
@@ -121,14 +121,14 @@ class NativeDoctor {
 
     writer.emptyLine();
 
-    final manifests = Manifest.forPackageConfig(
+    final manifests = NativeManifest.forPackageConfig(
       packageConfig,
       verboseLogger: verboseLogger,
     );
 
     if (manifests.isEmpty) {
       writer.printMessage(
-        'No deppendency containing ${Manifest.fileName} found. Nothing to check.',
+        'No deppendency containing ${NativeManifest.fileName} found. Nothing to check.',
       );
       writer.emptyLine();
       return;

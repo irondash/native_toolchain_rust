@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:logging/logging.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
-import 'package:native_doctor/src/command.dart';
 
 class AndroidSdkInfo {
   AndroidSdkInfo({

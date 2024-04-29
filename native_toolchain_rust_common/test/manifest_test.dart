@@ -1,6 +1,4 @@
-import 'package:native_doctor/src/checkers/ndk.dart';
-import 'package:native_doctor/src/checkers/rustup.dart';
-import 'package:native_doctor/src/manifest.dart';
+import 'package:native_toolchain_rust_common/src/manifest.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -18,7 +16,7 @@ requirements:
 
 void main() {
   test('Manifest can be parsed', () {
-    final manifest = Manifest.parse(_manifest);
+    final manifest = NativeManifest.parse(_manifest);
     expect(manifest.version, Version.parse('0.1.0'));
 
     final ndkVersion = manifest.requirements['ndk'];

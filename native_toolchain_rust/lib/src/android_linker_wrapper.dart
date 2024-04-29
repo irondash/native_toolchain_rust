@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:native_toolchain_rust/rustup.dart';
-import 'package:native_toolchain_rust/src/command.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
 
 const _cargoToml = '''

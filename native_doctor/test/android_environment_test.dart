@@ -1,7 +1,6 @@
 import 'package:native_doctor/src/android_sdk.dart';
-import 'package:native_doctor/src/command.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:test/test.dart';
-import 'package:rustup/src/internal/fake_process_manager.dart';
 
 void main() {
   test('android environment', () async {

@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_doctor/src/android_sdk.dart';
-import 'package:native_doctor/src/command.dart';
 import 'package:native_doctor/src/native_doctor.dart';
 import 'package:native_doctor/src/toolchain_checker.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:source_span/source_span.dart';
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
@@ -19,28 +18,6 @@ class _Ndk {
 
   final Version version;
   final Uri uri;
-}
-
-class NdkManifestInfo {
-  NdkManifestInfo({
-    required this.version,
-  });
-
-  final Version version;
-
-  static NdkManifestInfo parse(YamlNode node) {
-    if (node is! YamlMap) {
-      throw SourceSpanException('NDK manifest info must be a map', node.span);
-    }
-
-    final version = node.nodes['version'];
-    if (version is! YamlScalar) {
-      throw SourceSpanException('NDK version must be a string', node.span);
-    }
-    return NdkManifestInfo(
-      version: Version.parse(version.value as String),
-    );
-  }
 }
 
 class NdkToolchainChecker extends ToolchainChecker {

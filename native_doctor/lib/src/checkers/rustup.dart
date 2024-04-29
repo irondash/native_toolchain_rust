@@ -3,39 +3,10 @@ import 'package:native_doctor/src/tool_error.dart';
 import 'package:native_doctor/src/writer.dart';
 import 'package:native_doctor/src/toolchain_checker.dart';
 import 'package:native_doctor/src/native_doctor.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rustup/rustup.dart';
-import 'package:source_span/source_span.dart';
 import 'package:yaml/yaml.dart';
-
-class RustManifestInfo {
-  RustManifestInfo({required this.toolchainToVersion});
-
-  final Map<String, Version> toolchainToVersion;
-
-  static RustManifestInfo parse(YamlNode node) {
-    if (node is! YamlMap) {
-      throw SourceSpanException('Rust manifest info must be a map', node.span);
-    }
-    final toolchainToVersion = <String, Version>{};
-    for (final entry in node.nodes.entries) {
-      final toolchain = entry.key.value as String;
-      final value = entry.value;
-      if (value is! YamlMap) {
-        throw SourceSpanException(
-            'Rust toolchain version must be in a map', value.span);
-      }
-      final version = value.nodes['version'];
-      if (version is! YamlScalar) {
-        throw SourceSpanException('Rust version must be a string', value.span);
-      }
-      final parsedVersion = Version.parse(version.value as String);
-      toolchainToVersion[toolchain] = parsedVersion;
-    }
-
-    return RustManifestInfo(toolchainToVersion: toolchainToVersion);
-  }
-}
 
 class _RustToolchainRequirement {
   final String name;

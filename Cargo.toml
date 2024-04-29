@@ -1,0 +1,3 @@
+[workspace]
+members = ["example/dart_package/rust"]
+resolver = "2"

@@ -1,9 +1,7 @@
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:rustup/src/internal/command.dart';
 import 'package:rustup/src/rustup.dart';
 import 'package:test/test.dart';
-
-import 'package:rustup/src/internal/fake_process_manager.dart';
 
 void main() {
   test('rustup with no toolchains', () async {

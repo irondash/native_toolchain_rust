@@ -18,12 +18,12 @@ class ManifestException {
   }
 }
 
-class ManifestInfo {
-  ManifestInfo({required this.packageName});
+class CrateManifestInfo {
+  CrateManifestInfo({required this.packageName});
 
   final String packageName;
 
-  static ManifestInfo parseManifest(String manifest, {final String? fileName}) {
+  static CrateManifestInfo parseManifest(String manifest, {final String? fileName}) {
     final toml = TomlDocument.parse(manifest);
     final package = toml.toMap()['package'];
     if (package == null) {
@@ -33,10 +33,10 @@ class ManifestInfo {
     if (name == null) {
       throw ManifestException('Missing package name', fileName: fileName);
     }
-    return ManifestInfo(packageName: name);
+    return CrateManifestInfo(packageName: name);
   }
 
-  static ManifestInfo load(Uri manifestPath) {
+  static CrateManifestInfo load(Uri manifestPath) {
     final manifestFile = File.fromUri(manifestPath);
     final manifest = manifestFile.readAsStringSync();
     return parseManifest(manifest, fileName: manifestFile.path);

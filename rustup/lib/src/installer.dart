@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
-import 'package:rustup/src/internal/command.dart';
 
 abstract class RustupInstaller {
   static Future<RustupInstaller> create({Logger? logger}) {
