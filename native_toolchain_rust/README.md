@@ -80,7 +80,7 @@ Package that has Rust code in it depends on Rust toolchain to be installed on ma
 For example, when user tries to build your package without having Rust installed, they get the following error message:
 ```
 Rustup not found.
-Please run native_doctor in your project to fix the issues:
+Please run native_doctor in your project to fix the issue:
 
 dart pub global activate native_doctor
 dart pub global run native_doctor
