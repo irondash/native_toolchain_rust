@@ -26,6 +26,9 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
+      - name: Install ninja-build
+        if: (matrix.os == 'ubuntu-latest')
+        run: sudo apt-get update && sudo apt-get install ninja-build
       - name: enable native assets
         run: flutter config --enable-native-assets
       - name: install melos
