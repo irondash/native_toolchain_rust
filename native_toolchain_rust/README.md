@@ -119,7 +119,7 @@ Proposed actions:
 Do you want native doctor to perform proposed actions? (y/N)
 ```
 
-After confirming, Rustup will automatically install correct NDK version and required Rust toolchain and targets:
+After confirming, `native_doctor` will automatically install correct NDK version, required Rust toolchain and targets:
 
 ```
  • Fetching NDK list... [done]
