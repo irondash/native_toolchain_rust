@@ -1,2 +1,3 @@
 [workspace]
+members = ["example/dart_package/rust", "example/flutter_package/rust"]
 resolver = "2"
