@@ -1,11 +1,3 @@
 name: native_toolchain_rust
 
 packages:
-  - native_toolchain_rust
-  - native_toolchain_rust_common
-  - rustup
-  - native_doctor
-  - example/dart_package
-  - example/flutter_package
-  - example/flutter_package/example
-
