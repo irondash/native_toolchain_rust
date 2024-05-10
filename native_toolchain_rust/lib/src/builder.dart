@@ -148,8 +148,10 @@ class RustBuilder {
   Future<void> run({required BuildOutput output}) async {
     final toolchain = this.toolchain ?? await RustToolchain.withName('stable');
 
-    final manifestPath =
-        buildConfig.packageRoot.resolve(cratePath).resolve('Cargo.toml');
+    final manifestPath = buildConfig.packageRoot
+        .resolve(cratePath)
+        .makeDirectory()
+        .resolve('Cargo.toml');
     final manifestInfo = CrateManifestInfo.load(manifestPath);
     final outDir =
         buildConfig.outputDirectory.resolve('native_toolchain_rust/');
@@ -269,6 +271,17 @@ class RustBuilder {
       return env.buildEnvironment();
     } else {
       return {};
+    }
+  }
+}
+
+extension on Uri {
+  // Ensure that the path ends with a `/`.
+  Uri makeDirectory() {
+    if (pathSegments.isNotEmpty && pathSegments.last.isNotEmpty) {
+      return replace(pathSegments: [...pathSegments, '']);
+    } else {
+      return this;
     }
   }
 }
