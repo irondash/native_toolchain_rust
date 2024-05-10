@@ -19,7 +19,7 @@ abstract class RustupInstaller {
     String? cargoHome,
     String? rustupHome,
   }) async {
-    final process = await runCommand(
+    await runCommand(
       _scriptPath(),
       [
         '--default-toolchain',
@@ -33,10 +33,6 @@ abstract class RustupInstaller {
       },
       logger: _logger,
     );
-    final exitCode = process.exitCode;
-    if (exitCode != 0) {
-      throw Exception('Failed to install rustup');
-    }
   }
 
   Future<void> dispose();

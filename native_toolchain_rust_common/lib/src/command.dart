@@ -53,7 +53,7 @@ class CommandFailedException implements Exception {
   }
 }
 
-Future<ProcessResult> runCommand(
+Future<String> runCommand(
   String executable,
   List<String> arguments, {
   String? workingDirectory,
@@ -85,6 +85,6 @@ Future<ProcessResult> runCommand(
       result: res,
     );
   } else {
-    return res;
+    return res.stdout as String;
   }
 }

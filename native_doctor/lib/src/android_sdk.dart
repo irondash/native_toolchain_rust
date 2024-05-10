@@ -20,7 +20,7 @@ class AndroidSdkInfo {
     final flutterCommand = flutterRoot != null
         ? path.join(flutterRoot, 'bin', 'flutter')
         : 'flutter';
-    final result = await runCommand(
+    final json = await runCommand(
       flutterCommand,
       [
         'config',
@@ -28,7 +28,6 @@ class AndroidSdkInfo {
       ],
       logger: logger,
     );
-    final json = result.stdout as String;
     final decoded = jsonDecode(json) as Map<String, dynamic>;
     final javaHome = decoded['jdk-dir'] as String?;
     final sdk = decoded['android-sdk'] as String?;

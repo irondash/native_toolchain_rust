@@ -214,7 +214,7 @@ class NdkToolchainChecker extends ToolchainChecker {
         logger: doctor.verboseLogger,
       );
       latestVersion = findBestNdkKversion(
-        sdkManagerOutput: list.stdout,
+        sdkManagerOutput: list,
         minimumVersion: minimumVersion!,
       );
       if (latestVersion == null) {
