@@ -274,19 +274,28 @@ void printUsage(ArgParser argParser, Writer writer) {
 void run(List<String> arguments) async {
   final writer = AnsiWriter();
   final ArgParser argParser = buildParser();
+  final ArgResults results;
   try {
-    final ArgResults results = argParser.parse(arguments);
+    results = argParser.parse(arguments);
+  } on FormatException catch (e) {
+    // Print usage information if an invalid argument was provided.
+    writer.printMessage(e.message);
+    writer.emptyLine();
+    printUsage(argParser, writer);
+    exit(1);
+  }
 
-    // Process the parsed arguments.
-    if (results.wasParsed('help')) {
-      printUsage(argParser, writer);
-      return;
-    }
-    if (results.wasParsed('version')) {
-      print('native_doctor version: $version');
-      return;
-    }
+  // Process the parsed arguments.
+  if (results.wasParsed('help')) {
+    printUsage(argParser, writer);
+    return;
+  }
+  if (results.wasParsed('version')) {
+    print('native_doctor version: $version');
+    return;
+  }
 
+  try {
     final options = ToolOptions(
       verbose: results.wasParsed('verbose'),
       yes: results.wasParsed('yes'),
@@ -302,11 +311,6 @@ void run(List<String> arguments) async {
     } else {
       throw ToolError('Project path ${options.path.path} does not exist.');
     }
-  } on FormatException catch (e) {
-    // Print usage information if an invalid argument was provided.
-    writer.printMessage(e.message);
-    writer.emptyLine();
-    printUsage(argParser, writer);
   } on Exception catch (e) {
     writer.emptyLine();
     writer.printMessage(writer.color(
