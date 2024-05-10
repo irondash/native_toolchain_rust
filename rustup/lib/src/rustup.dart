@@ -60,8 +60,7 @@ class Rustup {
     // To list all non-custom toolchains, we need to filter out lines that
     // don't start with "stable", "beta", or "nightly".
     Pattern nonCustom = RegExp(r"^(stable|beta|nightly)");
-    final lines = res.stdout
-        .toString()
+    final lines = res
         .split('\n')
         .where((e) => e.isNotEmpty && e.startsWith(nonCustom))
         .map(extractToolchainName)
@@ -81,7 +80,7 @@ class Rustup {
     return runCommand(['self', 'uninstall', '-y']);
   }
 
-  Future<ProcessResult> runCommand(
+  Future<String> runCommand(
     List<String> arguments, {
     Map<String, String>? environment,
     Logger? logger,
@@ -274,7 +273,7 @@ class RustupToolchain {
 
   Future<Version> rustVersion() async {
     final res = await rustup.runCommand(['run', name, 'rustc', '--version']);
-    final versionString = res.stdout.toString().split(' ')[1];
+    final versionString = res.split(' ')[1];
     return Version.parse(versionString);
   }
 
@@ -301,7 +300,7 @@ class RustupToolchain {
       name,
       '--installed',
     ]);
-    final lines = res.stdout.toString().split('\n').where((e) => e.isNotEmpty);
+    final lines = res.toString().split('\n').where((e) => e.isNotEmpty);
     return lines
         .map((e) => RustTarget.fromTriple(e))
         .whereNotNull()
