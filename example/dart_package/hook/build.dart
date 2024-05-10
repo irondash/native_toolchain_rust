@@ -8,7 +8,7 @@ void main(List<String> args) async {
     await build(args, (BuildConfig buildConfig, BuildOutput output) async {
       final builder = RustBuilder(
         package: 'dart_package',
-        crateManifestPath: 'rust/Cargo.toml',
+        cratePath: 'rust',
         buildConfig: buildConfig,
       );
       await builder.run(output: output);

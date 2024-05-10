@@ -29,7 +29,7 @@ void main(List<String> args) async {
       final builder = RustBuilder(
         // The ID of native assets consists of package name and crate name.
         package: '<your package name>',
-        crateManifestPath: 'rust/Cargo.toml',
+        cratePath: 'rust',
         buildConfig: buildConfig,
       );
       await builder.run(output: output);
