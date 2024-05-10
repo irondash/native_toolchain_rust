@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust/rustup.dart';
 import 'package:native_toolchain_rust/src/android_linker_wrapper.dart';
 import 'package:path/path.dart' as path;
@@ -86,8 +87,6 @@ class AndroidEnvironment {
   Future<Map<String, String>> buildEnvironment() async {
     final toolchainPath = ndkInfo.toolchainPath;
 
-    final exe = Platform.isWindows ? '.exe' : '';
-
     final arKey = 'AR_${target.triple}';
     final arValue = ['${target.triple}-ar', 'llvm-ar', 'llvm-ar.exe']
         .map((e) => path.join(toolchainPath, e))
@@ -99,12 +98,18 @@ class AndroidEnvironment {
     final targetArg = '--target=${target.triple}$minSdkVersion';
 
     final ccKey = 'CC_${target.triple}';
-    final ccValue = path.join(toolchainPath, 'clang$exe');
+    final ccValue = path.join(
+      toolchainPath,
+      OS.current.executableFileName('clang'),
+    );
     final cfFlagsKey = 'CFLAGS_${target.triple}';
     final cFlagsValue = targetArg;
 
     final cxxKey = 'CXX_${target.triple}';
-    final cxxValue = path.join(toolchainPath, 'clang++$exe');
+    final cxxValue = path.join(
+      toolchainPath,
+      OS.current.executableFileName('clang++'),
+    );
     final cxxFlagsKey = 'CXXFLAGS_${target.triple}';
     final cxxFlagsValue = targetArg;
 
@@ -113,7 +118,10 @@ class AndroidEnvironment {
             .toUpperCase();
 
     final ranlibKey = 'RANLIB_${target.triple}';
-    final ranlibValue = path.join(toolchainPath, 'llvm-ranlib$exe');
+    final ranlibValue = path.join(
+      toolchainPath,
+      OS.current.executableFileName('llvm-ranlib'),
+    );
 
     final rustFlagsKey = 'CARGO_ENCODED_RUSTFLAGS';
     final rustFlagsValue = _libGccWorkaround(targetTempDir, ndkInfo.ndkVersion);
