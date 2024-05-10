@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust/rustup.dart';
 import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
@@ -61,9 +62,8 @@ class AndroidLinkerWrapper {
 
   Future<String> linkerWrapperPath() async {
     String wrapperRoot = path.join(tempDir, 'linker_wrapper_1.0');
-    final exe = Platform.isWindows ? '.exe' : '';
-    String executablePath =
-        path.join(wrapperRoot, 'target', 'debug', 'linker_wrapper$exe');
+    String executablePath = path.join(wrapperRoot, 'target', 'debug',
+        OS.current.executableFileName('linker_wrapper'));
     if (!File(executablePath).existsSync()) {
       Directory(wrapperRoot).createSync(recursive: true);
       File(path.join(wrapperRoot, 'Cargo.toml')).writeAsStringSync(_cargoToml);
