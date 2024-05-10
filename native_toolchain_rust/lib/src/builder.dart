@@ -107,7 +107,7 @@ class RustBuilder {
     this.toolchain,
     required this.crateManifestPath,
     required this.buildConfig,
-    this.ignoreMissingNativeManifest = false,
+    this.useNativeManifest = true,
     this.dartBuildFiles = const ['hook/build.dart'],
     this.logger,
   });
@@ -135,12 +135,12 @@ class RustBuilder {
   final List<String> dartBuildFiles;
 
   /// By default `native_toolchain_rust` expects `native_manifest.yaml` in
-  /// package root in order to check for required Rust version and also for
+  /// package root in order to check for the required Rust version and also for
   /// `native_doctor` to work. If you don't want to include `native_manifest.yaml`
-  /// in your package, set this to `true`.
+  /// in your package, set this to `false`.
   ///
   /// See https://pub.dev/packages/native_doctor for more information.
-  final bool ignoreMissingNativeManifest;
+  final bool useNativeManifest;
 
   /// Optional logger for verbose output.
   final Logger? logger;
@@ -176,7 +176,7 @@ class RustBuilder {
     )!;
 
     await toolchain._checkTarget(target: target);
-    if (!ignoreMissingNativeManifest) {
+    if (useNativeManifest) {
       await toolchain._checkNativeManifest(buildConfig: buildConfig);
     }
 
