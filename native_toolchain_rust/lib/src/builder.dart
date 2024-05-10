@@ -105,7 +105,7 @@ class RustBuilder {
   RustBuilder({
     required this.package,
     this.toolchain,
-    required this.crateManifestPath,
+    required this.cratePath,
     required this.buildConfig,
     this.useNativeManifest = true,
     this.dartBuildFiles = const ['hook/build.dart'],
@@ -124,8 +124,8 @@ class RustBuilder {
   /// ```
   final String package;
 
-  /// Path to the `Cargo.toml` file relative to the package root.
-  final String crateManifestPath;
+  /// Path to the Rust crate directory relative to the package root.
+  final String cratePath;
 
   /// Build config provided to the build callback from `native_assets_cli`.
   final BuildConfig buildConfig;
@@ -148,9 +148,8 @@ class RustBuilder {
   Future<void> run({required BuildOutput output}) async {
     final toolchain = this.toolchain ?? await RustToolchain.withName('stable');
 
-    final manifestPath = buildConfig.packageRoot.resolve(
-      crateManifestPath,
-    );
+    final manifestPath =
+        buildConfig.packageRoot.resolve(cratePath).resolve('Cargo.toml');
     final manifestInfo = CrateManifestInfo.load(manifestPath);
     final outDir =
         buildConfig.outputDirectory.resolve('native_toolchain_rust/');

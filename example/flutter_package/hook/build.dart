@@ -9,7 +9,7 @@ void main(List<String> args) async {
       final builder = RustBuilder(
         // The ID of native assets consists of package name and crate name.
         package: 'flutter_package',
-        crateManifestPath: 'rust/Cargo.toml',
+        cratePath: 'rust',
         buildConfig: buildConfig,
       );
       await builder.run(output: output);
