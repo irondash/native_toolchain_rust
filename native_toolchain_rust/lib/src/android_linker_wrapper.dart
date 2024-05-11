@@ -51,6 +51,11 @@ fn main() {
 }
 ''';
 
+/// This class is responsible for creating and building the linker wrapper.
+/// This avoid using NDK wrapper scripts, which on windows cause problems when invoked
+/// from rustc due to wrong CMD argument escaping.
+///
+/// https://github.com/android/ndk/issues/1856
 class AndroidLinkerWrapper {
   final String tempDir;
   final RustupToolchain toolchain;

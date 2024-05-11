@@ -51,5 +51,5 @@ jobs:
         run: dart --enable-experiment=native-assets test
         working-directory: example/dart_package
       - name: dart run
-        run: dart --enable-experiment=native-assets run example/dart_package_example.dart
+        run: dart --enable-experiment=native-assets run bin/dart_package_example.dart
         working-directory: example/dart_package

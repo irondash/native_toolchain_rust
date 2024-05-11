@@ -81,7 +81,7 @@ class RustToolchain {
     if (manifest == null) {
       throw RustToolchainException(
         message: '`native_manifest.yaml` expected in package root.\n'
-            'See https://pub.dev/packages/native_doctor more information and example manifest.',
+            'See https://pub.dev/packages/native_doctor for more information and an example manifest.',
       );
     }
     final requirements = manifest.requirements;
