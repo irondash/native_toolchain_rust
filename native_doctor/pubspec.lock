@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: native_assets_cli
-      sha256: "9c1b67ccf85ec9282f34e5348ae78dcb7da2c7dc965c0265306477d977853a0d"
+      sha256: f54ddc4a3f8cff1d8d63723b4938902da7586a5a47fe3c1bfa226eb80223f32e
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.4"
+    version: "0.6.0"
   native_toolchain_rust_common:
     dependency: "direct main"
     description:
