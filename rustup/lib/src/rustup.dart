@@ -303,7 +303,7 @@ class RustupToolchain {
     final lines = res.toString().split('\n').where((e) => e.isNotEmpty);
     return lines
         .map((e) => RustTarget.fromTriple(e))
-        .whereNotNull()
+        .nonNulls
         .toList(growable: false);
   }
 
