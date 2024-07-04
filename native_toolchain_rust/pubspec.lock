@@ -199,7 +199,7 @@ packages:
       path: "../native_toolchain_rust_common"
       relative: true
     source: path
-    version: "0.1.0-dev.2"
+    version: "0.1.0-dev.3"
   node_preamble:
     dependency: transitive
     description:
@@ -270,7 +270,7 @@ packages:
       path: "../rustup"
       relative: true
     source: path
-    version: "0.1.0-dev.2"
+    version: "0.1.0-dev.3"
   shelf:
     dependency: transitive
     description:
