@@ -73,7 +73,9 @@ dependency_overrides:
         break;
       } catch (e) {
         if (attempt > 5) {
-          rethrow;
+          // Thanks windows.
+          print('Build temp dir clean failed. Giving up.');
+          break;
         }
         attempt++;
         // Windows being windows.

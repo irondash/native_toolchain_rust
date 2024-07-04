@@ -107,6 +107,7 @@ class RustBuilder {
     this.toolchain,
     required this.cratePath,
     required this.buildConfig,
+    this.assetName,
     this.useNativeManifest = true,
     this.dartBuildFiles = const ['hook/build.dart'],
     this.logger,
@@ -122,7 +123,11 @@ class RustBuilder {
   /// @ffi.DefaultAsset('package:my_package/my_crate')
   /// library rust;
   /// ```
+  /// The name can be overridden by specifying [assetName].
   final String package;
+
+  /// Optional asset name used for generating asset Id. If not specified crate name will be used.
+  final String? assetName;
 
   /// Path to the Rust crate directory relative to the package root.
   final String cratePath;
@@ -162,7 +167,7 @@ class RustBuilder {
     if (buildConfig.dryRun) {
       output.addAsset(NativeCodeAsset(
         package: package,
-        name: manifestInfo.packageName,
+        name: assetName ?? manifestInfo.packageName,
         linkMode: DynamicLoadingBundled(),
         os: buildConfig.targetOS,
         file: Uri.file(dylibName),
@@ -213,7 +218,7 @@ class RustBuilder {
 
     final asset = NativeCodeAsset(
       package: package,
-      name: manifestInfo.packageName,
+      name: assetName ?? manifestInfo.packageName,
       os: buildConfig.targetOS,
       architecture: buildConfig.targetArchitecture,
       linkMode: DynamicLoadingBundled(),
