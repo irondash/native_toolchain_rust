@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-07-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`native_toolchain_rust` - `v0.1.0-dev.4`](#native_toolchain_rust---v010-dev4)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `native_toolchain_rust` - `v0.1.0-dev.4`
+
+ - **FIX**: use OS.executableFileName rather than hardcoding the extension (#5).
+ - **FIX**: wording.
+ - **FIX**: tweak message.
+ - **FIX**: android build fixes.
+ - **FEAT**: allow overriding asset name (#13).
+ - **FEAT**: add build tests (#3).
+ - **FEAT**: write error message to stderr.
+ - **DOCS**: wording.
+ - **DOCS**: singular.
+ - **DOCS**: update example link.
+ - **BREAKING** **FEAT**: update native_assets_cli version.
+ - **BREAKING** **FEAT**: rename ignoreMissingNativeManifest to useNativeManifest (#6).
+
+
 ## 2024-07-04
 
 ### Changes
