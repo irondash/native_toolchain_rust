@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   native_toolchain_rust: ^0.1.0-dev.4
-  native_assets_cli: ^0.6.1
+  native_assets_cli: ^0.7.2
 
 dev_dependencies:
   flutter_test:
