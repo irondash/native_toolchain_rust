@@ -18,7 +18,7 @@ dependencies:
   pub_semver: ^2.1.4
   yaml: ^3.1.2
   pubspec_parse: ^1.2.3
-  native_assets_cli: ^0.6.1
+  native_assets_cli: ^0.7.2
   collection: ^1.18.0
   logging: ^1.2.0
   path: ^1.9.0
