@@ -1,3 +1,7 @@
+## 0.1.0-dev.5
+
+ - **FIX**: build on iOS failing for crates with build script (#18).
+
 ## 0.1.0-dev.4
 
 > Note: This release has breaking changes.
