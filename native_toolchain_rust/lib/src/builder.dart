@@ -198,6 +198,7 @@ class RustBuilder {
           '-p',
           manifestInfo.packageName,
           if (buildConfig.buildMode == BuildMode.release) '--release',
+          '--verbose',
           '--target',
           target.triple,
           '--target-dir',
@@ -274,6 +275,17 @@ class RustBuilder {
         target: target,
       );
       return env.buildEnvironment();
+    } else if (buildConfig.targetOS == OS.iOS) {
+      final path = Platform.environment['PATH'] ?? '';
+      // XCode injects paths in PATH that breaks host build for crates with build.rs.
+      // https://github.com/irondash/native_toolchain_rust/issues/17
+      final newPath = path
+          .split(':')
+          .where((e) => !e.contains('Contents/Developer/'))
+          .join(':');
+      return {
+        'PATH': newPath,
+      };
     } else {
       return {};
     }
