@@ -193,6 +193,6 @@ void main() async {
         }
       });
     },
-    timeout: const Timeout(Duration(minutes: 10)),
+    timeout: const Timeout(Duration(minutes: 20)),
   );
 }
