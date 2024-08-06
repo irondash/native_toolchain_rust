@@ -286,7 +286,7 @@ packages:
       path: "../rustup"
       relative: true
     source: path
-    version: "0.1.0-dev.3"
+    version: "0.1.0-dev.6"
   shelf:
     dependency: transitive
     description:

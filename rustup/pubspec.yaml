@@ -1,6 +1,6 @@
 name: rustup
 description: "Dart bindings for the rustup CLI tool."
-version: 0.1.0-dev.3
+version: 0.1.0-dev.6
 homepage: https://github.com/irondash/native_toolchain_rust.git
 
 environment:
