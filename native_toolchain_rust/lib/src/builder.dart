@@ -107,6 +107,7 @@ class RustBuilder {
     this.toolchain,
     required this.cratePath,
     required this.buildConfig,
+    this.release = true,
     this.assetName,
     this.useNativeManifest = true,
     this.dartBuildFiles = const ['hook/build.dart'],
@@ -138,6 +139,9 @@ class RustBuilder {
   /// Dart build files inside hook directory that should be added as
   /// dependencies. Default value adds `hook/build.dart` as dependency.
   final List<String> dartBuildFiles;
+
+  /// Whether to build in release mode. Default is `true` even for debug builds.
+  final bool release;
 
   /// By default `native_toolchain_rust` expects `native_manifest.yaml` in
   /// package root in order to check for the required Rust version and also for
@@ -186,6 +190,8 @@ class RustBuilder {
       await toolchain._checkNativeManifest(buildConfig: buildConfig);
     }
 
+    final effectiveBuildMode = release ? BuildMode.release : BuildMode.debug;
+
     if (!buildConfig.dryRun) {
       await toolchain.toolchain.rustup.runCommand(
         [
@@ -197,7 +203,7 @@ class RustBuilder {
           manifestPath.toFilePath(),
           '-p',
           manifestInfo.packageName,
-          if (buildConfig.buildMode == BuildMode.release) '--release',
+          if (effectiveBuildMode == BuildMode.release) '--release',
           '--verbose',
           '--target',
           target.triple,
@@ -215,7 +221,7 @@ class RustBuilder {
 
     final effectiveOutDir = outDir
         .resolve('${target.triple}/')
-        .resolve('${buildConfig.buildMode.name}/');
+        .resolve('${effectiveBuildMode.name}/');
 
     final asset = NativeCodeAsset(
       package: package,
