@@ -11,6 +11,7 @@ void main(List<String> args) async {
         package: 'flutter_package',
         cratePath: 'rust',
         buildConfig: buildConfig,
+        extraCargoArgs: ['--features=sum'],
       );
       await builder.run(output: output);
     });

@@ -107,6 +107,7 @@ class RustBuilder {
     this.toolchain,
     required this.cratePath,
     required this.buildConfig,
+    this.extraCargoArgs = const [],
     this.release = true,
     this.assetName,
     this.useNativeManifest = true,
@@ -139,6 +140,9 @@ class RustBuilder {
   /// Dart build files inside hook directory that should be added as
   /// dependencies. Default value adds `hook/build.dart` as dependency.
   final List<String> dartBuildFiles;
+
+  /// Extra arguments to pass to `cargo build`.
+  final List<String> extraCargoArgs;
 
   /// Whether to build in release mode. Default is `true` even for debug builds.
   final bool release;
@@ -209,6 +213,7 @@ class RustBuilder {
           target.triple,
           '--target-dir',
           outDir.toFilePath(),
+          ...extraCargoArgs,
         ],
         environment: await _buildEnvironment(
           outDir,
