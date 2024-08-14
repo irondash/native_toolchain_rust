@@ -1,3 +1,8 @@
+## 0.1.0-dev.7
+
+ - **FEAT**: added extraCargoArgs argument to RustBuilder (#20).
+ - **FEAT**: always build in release mode by default (#19).
+
 ## 0.1.0-dev.5
 
  - **FIX**: build on iOS failing for crates with build script (#18).
