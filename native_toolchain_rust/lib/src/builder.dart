@@ -104,9 +104,12 @@ class RustToolchain {
 class RustBuilder {
   RustBuilder({
     required this.package,
-    this.toolchain,
-    required this.cratePath,
     required this.buildConfig,
+    this.buildMode = CargoBuildMode.build,
+    this.toolchain,
+    this.cratePath,
+    this.crateType,
+    this.crateName,
     this.extraCargoArgs = const [],
     this.release = true,
     this.assetName,
@@ -117,6 +120,8 @@ class RustBuilder {
 
   /// Custom Rust toolchain to use (optional).
   final RustToolchain? toolchain;
+
+  final CargoBuildMode buildMode;
 
   /// Package name. This will be part of asset Id.
   /// For example package `my_package` with crate name `my_crate` will have
@@ -132,7 +137,12 @@ class RustBuilder {
   final String? assetName;
 
   /// Path to the Rust crate directory relative to the package root.
-  final String cratePath;
+  final String? cratePath;
+
+  /// Name of the crate to be built.
+  final String? crateName;
+
+  final CrateType? crateType;
 
   /// Build config provided to the build callback from `native_assets_cli`.
   final BuildConfig buildConfig;
@@ -158,24 +168,37 @@ class RustBuilder {
   /// Optional logger for verbose output.
   final Logger? logger;
 
-  Future<void> run({required BuildOutput output}) async {
+  Future<void> run({required BuildOutput output, String? linkInPackage}) async {
+    assert(
+      buildConfig.linkingEnabled || linkInPackage == null,
+      'linkInPackage can only be provided if config.linkingEnabled is true.',
+    );
+
     final toolchain = this.toolchain ?? await RustToolchain.withName('stable');
 
-    final manifestPath = buildConfig.packageRoot
-        .resolve(cratePath)
-        .makeDirectory()
-        .resolve('Cargo.toml');
-    final manifestInfo = CrateManifestInfo.load(manifestPath);
+    final manifestPath = cratePath != null
+        ? buildConfig.packageRoot
+            .resolve(cratePath!)
+            .makeDirectory()
+            .resolve('Cargo.toml')
+        : null;
+    final manifestInfo =
+        manifestPath != null ? CrateManifestInfo.load(manifestPath) : null;
+    final packageName = crateName ?? manifestInfo?.packageName;
+
+    if (packageName == null) {
+      throw ArgumentError('Either `crateName` or `cratePath` must be set.');
+    }
+
     final outDir =
         buildConfig.outputDirectory.resolve('native_toolchain_rust/');
 
-    final dylibName =
-        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
+    final dylibName = buildConfig.targetOS.dylibFileName(packageName);
 
     if (buildConfig.dryRun) {
       output.addAsset(NativeCodeAsset(
         package: package,
-        name: assetName ?? manifestInfo.packageName,
+        name: assetName ?? packageName,
         linkMode: DynamicLoadingBundled(),
         os: buildConfig.targetOS,
         file: Uri.file(dylibName),
@@ -202,17 +225,17 @@ class RustBuilder {
           'run',
           toolchain.name,
           'cargo',
-          'build',
-          '--manifest-path',
-          manifestPath.toFilePath(),
-          '-p',
-          manifestInfo.packageName,
+          buildMode.name,
+          if (manifestPath != null) ...[
+            '--manifest-path',
+            manifestPath.toFilePath(),
+          ],
+          ...['-p', packageName],
           if (effectiveBuildMode == BuildMode.release) '--release',
           '--verbose',
-          '--target',
-          target.triple,
-          '--target-dir',
-          outDir.toFilePath(),
+          ...['--target', target.triple],
+          ...['--target-dir', outDir.toFilePath()],
+          if (crateType != null) ...['--crate-type', crateType!.rustName],
           ...extraCargoArgs,
         ],
         environment: await _buildEnvironment(
@@ -230,13 +253,16 @@ class RustBuilder {
 
     final asset = NativeCodeAsset(
       package: package,
-      name: assetName ?? manifestInfo.packageName,
+      name: assetName ?? packageName,
       os: buildConfig.targetOS,
       architecture: buildConfig.targetArchitecture,
       linkMode: DynamicLoadingBundled(),
       file: effectiveOutDir.resolve(dylibName),
     );
-    output.addAsset(asset);
+    output.addAsset(
+      asset,
+      linkInPackage: linkInPackage,
+    );
     if (!buildConfig.dryRun) {
       _addDependencies(
         output: output,
@@ -312,4 +338,25 @@ extension on Uri {
       return this;
     }
   }
+}
+
+enum CargoBuildMode {
+  build,
+  rustc;
+}
+
+enum CrateType {
+  bin,
+  lib,
+  rlib,
+  dylib,
+  cdylib,
+  staticlib,
+  procMacro('proc-macro');
+
+  String get rustName => _rustName ?? name;
+
+  final String? _rustName;
+
+  const CrateType([this._rustName]);
 }
