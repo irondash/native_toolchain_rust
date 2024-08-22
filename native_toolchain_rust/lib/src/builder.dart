@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:native_toolchain_rust/rustup.dart';
-import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
-import 'package:rustup/rustup.dart';
 import 'package:native_toolchain_rust/src/android_environment.dart';
 import 'package:native_toolchain_rust/src/crate_manifest.dart';
-
+import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
+import 'package:rustup/rustup.dart';
 
 class RustToolchainException implements Exception {
   RustToolchainException({required this.message});
@@ -170,7 +169,7 @@ class RustBuilder {
         buildConfig.outputDirectory.resolve('native_toolchain_rust/');
 
     final dylibName =
-        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
+        buildConfig.targetOS.dylibFileName(manifestInfo.libraryName);
 
     if (buildConfig.dryRun) {
       output.addAsset(NativeCodeAsset(
