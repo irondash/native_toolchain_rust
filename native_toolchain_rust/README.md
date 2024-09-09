@@ -7,7 +7,7 @@ flutter config --enable-native-assets
 
 ## Usage
 
-To build Rust code alongside Flutter or Dart package following steps are required:
+To build Rust code alongside a Flutter or Dart package, the following steps are required:
 
 1. Add `native_toolchain_rust` and `native_assets_cli` as a dependency to your project.
 ```
@@ -42,7 +42,7 @@ void main(List<String> args) async {
 }
 ```
 
-This assumes that your Rust code is located in `rust` directory in package root. Crate must be a `cdylib`.
+This assumes that your Rust code is located in `rust` directory in package root.  The crate must be a `cdylib`.
 
 3. Add `native_manifest.yaml` file to your package root. This step is not strictly necessary, but it will let [`native_doctor`](https://pub.dev/packages/native_doctor) know what the toolchain requirements for your packages are.
 
@@ -75,9 +75,9 @@ For complete examples see the [example](../example) directory.
 
 ## Using packages with Rust native assets
 
-Package that has Rust code in it depends on Rust toolchain to be installed on machine of developer that uses the package. To make this as frictionless as possible, `native_toolchain_rust` detects if Rust toolchain is installed and up-do-date, and if not suggests running [`native_doctor`](https://pub.dev/packages/native_doctor) tool to automatically install and configure necessary toolchains.
+A package that has Rust code in it depends on the Rust toolchain being installed on the developer machine that uses the package. To make this as frictionless as possible, `native_toolchain_rust` detects if Rust toolchain is installed and up-do-date, and if not suggests running [`native_doctor`](https://pub.dev/packages/native_doctor) tool to automatically install and configure necessary toolchains.
 
-For example, when user tries to build your package without having Rust installed, they get the following error message:
+For example, when a user tries to build a package without having Rust installed, the following error message is shown:
 ```
 Rustup not found.
 Please run native_doctor in your project to fix the issue:
@@ -86,7 +86,7 @@ dart pub global activate native_doctor
 dart pub global run native_doctor
 ```
 
-And here's output of `native_doctor` run on a computer with no Rust installation and outdated NDK:
+And here's output of `native_doctor` run on a computer with no Rust installation and an outdated NDK:
 
 ```
 Project: example (Flutter)
@@ -119,7 +119,7 @@ Proposed actions:
 Do you want native doctor to perform proposed actions? (y/N)
 ```
 
-After confirming, `native_doctor` will automatically install correct NDK version, required Rust toolchain and targets:
+After confirming, `native_doctor` will automatically install the correct NDK version, required Rust toolchain and targets:
 
 ```
  • Fetching NDK list... [done]
