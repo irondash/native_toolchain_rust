@@ -4,14 +4,15 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: '>=3.5.0-90.0.dev <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  native_toolchain_rust: ^0.1.0-dev.7
-  native_assets_cli: ^0.7.2
+  native_toolchain_rust:
+    path: ../../native_toolchain_rust
+  native_assets_cli: ^0.12.0
 
 dev_dependencies:
   flutter_test:
@@ -22,7 +23,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
+# flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:

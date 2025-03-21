@@ -41,14 +41,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  cli_config:
-    dependency: transitive
-    description:
-      name: cli_config
-      sha256: ac20a183a07002b700f0c25e61b7ee46b23c309d76ab7b7640a028f18e4d99ec
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   collection:
     dependency: "direct main"
     description:
@@ -173,10 +165,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "7687075e408b093f36e6bbf6c91878cc0d4cd10f409506f7bc996f68220b9136"
+      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
       url: "https://pub.dev"
     source: hosted
-    version: "1.12.0"
+    version: "1.16.0"
   mime:
     dependency: transitive
     description:
@@ -189,10 +181,10 @@ packages:
     dependency: "direct main"
     description:
       name: native_assets_cli
-      sha256: "3da9bdd4beb2ed059dae7fd93baa62c5f6c3cdf630bbb88334303dfa92d6da26"
+      sha256: bd4cac2c174be1ec0dd86c1bd2b55ffaad6870f7bcf31b2d5d85d0a5fbc40e82
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2"
+    version: "0.12.0"
   native_toolchain_rust_common:
     dependency: "direct main"
     description:
@@ -270,7 +262,7 @@ packages:
       path: "../rustup"
       relative: true
     source: path
-    version: "0.1.0-dev.6"
+    version: "0.1.0-dev.8"
   shelf:
     dependency: transitive
     description:
@@ -448,4 +440,4 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.4.0-190.0.dev <4.0.0"
+  dart: ">=3.7.0 <4.0.0"

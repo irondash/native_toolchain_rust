@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 import 'package:native_doctor/src/android_sdk.dart';
 import 'package:native_doctor/src/native_doctor.dart';
 import 'package:native_doctor/src/toolchain_checker.dart';

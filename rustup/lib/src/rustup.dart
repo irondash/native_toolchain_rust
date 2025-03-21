@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:native_assets_cli/code_assets.dart';
 import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart'
     as common;
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
-import 'package:native_assets_cli/native_assets_cli.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:rustup/src/mutex.dart';

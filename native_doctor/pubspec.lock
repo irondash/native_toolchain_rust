@@ -49,14 +49,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  cli_config:
-    dependency: transitive
-    description:
-      name: cli_config
-      sha256: ac20a183a07002b700f0c25e61b7ee46b23c309d76ab7b7640a028f18e4d99ec
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   collection:
     dependency: "direct main"
     description:
@@ -189,10 +181,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "25dfcaf170a0190f47ca6355bdd4552cb8924b430512ff0cafb8db9bd41fe33b"
+      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
       url: "https://pub.dev"
     source: hosted
-    version: "1.14.0"
+    version: "1.16.0"
   mime:
     dependency: transitive
     description:
@@ -205,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: native_assets_cli
-      sha256: "3da9bdd4beb2ed059dae7fd93baa62c5f6c3cdf630bbb88334303dfa92d6da26"
+      sha256: bd4cac2c174be1ec0dd86c1bd2b55ffaad6870f7bcf31b2d5d85d0a5fbc40e82
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2"
+    version: "0.12.0"
   native_toolchain_rust_common:
     dependency: "direct main"
     description:
@@ -286,7 +278,7 @@ packages:
       path: "../rustup"
       relative: true
     source: path
-    version: "0.1.0-dev.6"
+    version: "0.1.0-dev.8"
   shelf:
     dependency: transitive
     description:
@@ -379,26 +371,26 @@ packages:
     dependency: "direct dev"
     description:
       name: test
-      sha256: d72b538180efcf8413cd2e4e6fcc7ae99c7712e0909eb9223f9da6e6d0ef715f
+      sha256: "301b213cd241ca982e9ba50266bd3f5bd1ea33f1455554c5abb85d1be0e2d87e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.25.4"
+    version: "1.25.15"
   test_api:
     dependency: transitive
     description:
       name: test_api
-      sha256: "2419f20b0c8677b2d67c8ac4d1ac7372d862dc6c460cdbb052b40155408cd794"
+      sha256: fb31f383e2ee25fbbfe06b40fe21e1e458d14080e3c67e7ba0acfde4df4e0bbd
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1"
+    version: "0.7.4"
   test_core:
     dependency: transitive
     description:
       name: test_core
-      sha256: "4d070a6bc36c1c4e89f20d353bfd71dc30cdf2bd0e14349090af360a029ab292"
+      sha256: "84d17c3486c8dfdbe5e12a50c8ae176d15e2a771b96909a9442b40173649ccaa"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.2"
+    version: "0.6.8"
   typed_data:
     dependency: transitive
     description:
@@ -456,4 +448,4 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.4.0-265.0.dev <4.0.0"
+  dart: ">=3.7.0 <4.0.0"

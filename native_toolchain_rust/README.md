@@ -25,12 +25,12 @@ import 'package:native_assets_cli/native_assets_cli.dart';
 
 void main(List<String> args) async {
   try {
-    await build(args, (BuildConfig buildConfig, BuildOutput output) async {
+    await build(args, (BuildInput input, BuildOutputBuilder output) async {
       final builder = RustBuilder(
         // The ID of native assets consists of package name and crate name.
         package: '<your package name>',
         cratePath: 'rust',
-        buildConfig: buildConfig,
+        buildInput: input,
       );
       await builder.run(output: output);
     });

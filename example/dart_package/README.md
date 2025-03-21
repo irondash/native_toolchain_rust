@@ -25,11 +25,10 @@ start using the package.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+Run binary console command in root folder:
 
-```dart
-const like = 'sample';
+```sh
+dart --enable-experiment=native-assets run bin/dart_package_example.dart
 ```
 
 ## Additional information

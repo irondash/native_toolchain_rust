@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 import 'package:native_doctor/src/checkers/ndk.dart';
 import 'package:native_doctor/src/writer.dart';
 import 'package:native_doctor/src/checkers/rustup.dart';

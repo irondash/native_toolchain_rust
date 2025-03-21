@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 import 'package:native_toolchain_rust/rustup.dart';
 import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:rustup/rustup.dart';
 import 'package:native_toolchain_rust/src/android_environment.dart';
 import 'package:native_toolchain_rust/src/crate_manifest.dart';
-
-import 'package:path/path.dart' as path;
 
 class RustToolchainException implements Exception {
   RustToolchainException({required this.message});
@@ -75,9 +73,9 @@ class RustToolchain {
   }
 
   Future<void> _checkNativeManifest({
-    required BuildConfig buildConfig,
+    required BuildInput buildInput,
   }) async {
-    final manifest = NativeManifest.forPackage(buildConfig.packageRoot);
+    final manifest = NativeManifest.forPackage(buildInput.packageRoot);
     if (manifest == null) {
       throw RustToolchainException(
         message: '`native_manifest.yaml` expected in package root.\n'
@@ -102,11 +100,11 @@ class RustToolchain {
 }
 
 class RustBuilder {
-  RustBuilder({
+  const RustBuilder({
     required this.package,
     this.toolchain,
     required this.cratePath,
-    required this.buildConfig,
+    required this.buildInput,
     this.extraCargoArgs = const [],
     this.release = true,
     this.assetName,
@@ -134,8 +132,8 @@ class RustBuilder {
   /// Path to the Rust crate directory relative to the package root.
   final String cratePath;
 
-  /// Build config provided to the build callback from `native_assets_cli`.
-  final BuildConfig buildConfig;
+  /// Build input provider from `native_assets_cli`.
+  final BuildInput buildInput;
 
   /// Dart build files inside hook directory that should be added as
   /// dependencies. Default value adds `hook/build.dart` as dependency.
@@ -158,115 +156,76 @@ class RustBuilder {
   /// Optional logger for verbose output.
   final Logger? logger;
 
-  Future<void> run({required BuildOutput output}) async {
+  Future<void> run({required BuildOutputBuilder output}) async {
     final toolchain = this.toolchain ?? await RustToolchain.withName('stable');
-
-    final manifestPath = buildConfig.packageRoot
+    final manifestPath = buildInput.packageRoot
         .resolve(cratePath)
         .makeDirectory()
         .resolve('Cargo.toml');
     final manifestInfo = CrateManifestInfo.load(manifestPath);
-    final outDir =
-        buildConfig.outputDirectory.resolve('native_toolchain_rust/');
+    final outDir = buildInput.outputDirectory.resolve('native_toolchain_rust/');
 
     final dylibName =
-        buildConfig.targetOS.dylibFileName(manifestInfo.packageName);
-
-    if (buildConfig.dryRun) {
-      output.addAsset(NativeCodeAsset(
-        package: package,
-        name: assetName ?? manifestInfo.packageName,
-        linkMode: DynamicLoadingBundled(),
-        os: buildConfig.targetOS,
-        file: Uri.file(dylibName),
-      ));
-      return;
-    }
+        buildInput.config.code.targetOS.dylibFileName(manifestInfo.packageName);
 
     final target = RustTarget.from(
-      architecture: buildConfig.targetArchitecture!,
-      os: buildConfig.targetOS,
-      iosSdk: buildConfig.targetOS == OS.iOS ? buildConfig.targetIOSSdk : null,
+      architecture: buildInput.config.code.targetArchitecture,
+      os: buildInput.config.code.targetOS,
+      iosSdk: buildInput.config.code.targetOS == OS.iOS
+          ? buildInput.config.code.iOS.targetSdk
+          : null,
     )!;
 
     await toolchain._checkTarget(target: target);
     if (useNativeManifest) {
-      await toolchain._checkNativeManifest(buildConfig: buildConfig);
+      await toolchain._checkNativeManifest(buildInput: buildInput);
     }
 
-    final effectiveBuildMode = release ? BuildMode.release : BuildMode.debug;
+    await toolchain.toolchain.rustup.runCommand(
+      [
+        'run',
+        toolchain.name,
+        'cargo',
+        'build',
+        '--manifest-path',
+        manifestPath.toFilePath(),
+        '-p',
+        manifestInfo.packageName,
+        if (release) '--release',
+        '--verbose',
+        '--target',
+        target.triple,
+        '--target-dir',
+        outDir.toFilePath(),
+        ...extraCargoArgs,
+      ],
+      environment: await _buildEnvironment(
+        outDir,
+        target,
+        toolchain.toolchain,
+      ),
+      logger: logger,
+    );
 
-    if (!buildConfig.dryRun) {
-      await toolchain.toolchain.rustup.runCommand(
-        [
-          'run',
-          toolchain.name,
-          'cargo',
-          'build',
-          '--manifest-path',
-          manifestPath.toFilePath(),
-          '-p',
-          manifestInfo.packageName,
-          if (effectiveBuildMode == BuildMode.release) '--release',
-          '--verbose',
-          '--target',
-          target.triple,
-          '--target-dir',
-          outDir.toFilePath(),
-          ...extraCargoArgs,
-        ],
-        environment: await _buildEnvironment(
-          outDir,
-          target,
-          toolchain.toolchain,
-        ),
-        logger: logger,
-      );
-    }
+    final buildModeName = release ? 'release' : 'debug';
 
-    final effectiveOutDir = outDir
-        .resolve('${target.triple}/')
-        .resolve('${effectiveBuildMode.name}/');
+    final effectiveOutDir =
+        outDir.resolve('${target.triple}/').resolve('$buildModeName/');
 
-    final asset = NativeCodeAsset(
+    final asset = CodeAsset(
       package: package,
       name: assetName ?? manifestInfo.packageName,
-      os: buildConfig.targetOS,
-      architecture: buildConfig.targetArchitecture,
+      os: buildInput.config.code.targetOS,
+      architecture: buildInput.config.code.targetArchitecture,
       linkMode: DynamicLoadingBundled(),
       file: effectiveOutDir.resolve(dylibName),
     );
-    output.addAsset(asset);
-    if (!buildConfig.dryRun) {
-      _addDependencies(
-        output: output,
-        effectiveOutDir: effectiveOutDir,
-        dylibName: dylibName,
-      );
-    }
+    output.assets.code.add(asset);
+
     for (final source in dartBuildFiles) {
       output.addDependency(
-        buildConfig.packageRoot.resolve(source),
+        buildInput.packageRoot.resolve(source),
       );
-    }
-  }
-
-  void _addDependencies({
-    required BuildOutput output,
-    required Uri effectiveOutDir,
-    required String dylibName,
-  }) {
-    final dylibPath = effectiveOutDir.resolve(dylibName).toFilePath();
-    final depFile = path.setExtension(dylibPath, '.d');
-    final lines = File(depFile).readAsLinesSync();
-    for (final line in lines) {
-      final parts = line.split(':');
-      if (parts[0] == dylibPath) {
-        final dependencies = parts[1].trim().split(' ');
-        for (final dependency in dependencies) {
-          output.addDependency(Uri.file(dependency));
-        }
-      }
     }
   }
 
@@ -275,18 +234,18 @@ class RustBuilder {
     RustTarget target,
     RustupToolchain toolchain,
   ) async {
-    if (buildConfig.targetOS == OS.android) {
-      final ndkInfo =
-          NdkInfo.forCCompiler(buildConfig.cCompiler.compiler!.toFilePath())!;
+    if (buildInput.config.code.targetOS == OS.android) {
+      final ndkInfo = NdkInfo.forCCompiler(
+          buildInput.config.code.cCompiler!.compiler.toFilePath())!;
       final env = AndroidEnvironment(
         ndkInfo: ndkInfo,
-        minSdkVersion: buildConfig.targetAndroidNdkApi!,
+        minSdkVersion: buildInput.config.code.android.targetNdkApi,
         targetTempDir: outDir.toFilePath(),
         toolchain: toolchain,
         target: target,
       );
       return env.buildEnvironment();
-    } else if (buildConfig.targetOS == OS.iOS) {
+    } else if ({OS.iOS, OS.macOS}.contains(buildInput.config.code.targetOS)) {
       final path = Platform.environment['PATH'] ?? '';
       // XCode injects paths in PATH that breaks host build for crates with build.rs.
       // https://github.com/irondash/native_toolchain_rust/issues/17

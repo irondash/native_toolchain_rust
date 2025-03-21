@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 import 'package:native_toolchain_rust/rustup.dart';
 import 'package:native_toolchain_rust_common/native_toolchain_rust_common.dart';
 import 'package:path/path.dart' as path;
